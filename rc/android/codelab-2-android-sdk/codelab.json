@@ -1,0 +1,25 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2025-06-25T16:51:47+09:00",
+  "id": "codelab-2-android-sdk",
+  "duration": 21,
+  "title": "Android In-App Purchases \u0026 Paywalls",
+  "summary": "RevenueCat Google Play Integration",
+  "source": "codelab.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "codelab",
+    "markdown"
+  ],
+  "tags": [
+    "web"
+  ],
+  "feedback": "https://github.com/revenuecat/codelab/issues/new",
+  "url": "codelab-2-android-sdk"
+}

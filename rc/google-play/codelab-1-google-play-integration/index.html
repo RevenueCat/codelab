@@ -1,0 +1,287 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>RevenueCat Google Play Integration</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  codelab-ga4id=""
+                  id="codelab-1-google-play-integration"
+                  title="RevenueCat Google Play Integration"
+                  environment="web"
+                  feedback-link="https://github.com/revenuecat/codelab/issues/new">
+    
+      <google-codelab-step label="RevenueCat Google Play Integration Overview" duration="3">
+        <p>Welcome to <a href="https://www.revenuecat.com/" target="_blank">RevenueCat</a>&#39;s Google Play Integration Codelab!</p>
+<p>In this codelab, you&#39;ll learn how to:</p>
+<ul>
+<li>Properly configure products on Google Play.</li>
+<li>Set up the RevenueCat dashboard and connect it to your Google Play products.</li>
+<li>Understanding Product, Offering, Package, and Entitlement.</li>
+<li>Create paywalls using the <a href="https://www.revenuecat.com/docs/tools/paywalls/creating-paywalls#using-the-editor" target="_blank">Paywall Editor</a>.</li>
+</ul>
+<p>By the end of this codelab, you&#39;ll be able to set up everything about Google Play and RevenueCat dashboard before implementing in-app purchases and paywalls seamlessly in your Android app, with all the necessary setup completed.</p>
+<h2 is-upgraded>Why RevenueCat?</h2>
+<p>The world&#39;s leading apps rely on RevenueCat to power in-app purchases, subscriptions, and paywalls, manage customer data, and grow revenue across iOS, Android, and the web. Handling over $8B in annual in-app purchases, RevenueCat is trusted by top companies like OpenAI (ChatGPT), Notion, Buffer, and Goodnotes.</p>
+<h3 is-upgraded>Why do so many developers choose RevenueCat?</h3>
+<p>RevenueCat simplifies cross-platform in-app purchases while providing a unified source of truth for analytics. It helps you better understand lifetime value (LTV), revenue trends, and user behavior—enabling smarter monetization and faster growth. Key benefits include:</p>
+<ul>
+<li><strong>Unified User Identity</strong>: Reliably link purchases to your own user IDs, solving the disconnect between app-level and store-level accounts.</li>
+<li><strong>Streamlined Subscription Management</strong>: Abstracts platform-specific limitations, offering consistent subscription behavior even when direct control is limited (e.g., on iOS).</li>
+<li><strong>Cross-Platform Analytics</strong>: Get standardized, real-time insights that are clearer and more actionable than the delayed data from Apple and Google consoles.</li>
+<li><strong>Accurate Pricing Insights</strong>: Understand exactly what users paid, across all locales and stores, even when native frameworks fall short.</li>
+</ul>
+<p>With RevenueCat, monetizing your app becomes simpler, smarter, and more scalable.</p>
+<p class="image-container"><img alt="used_by" src="img/ebbd5fec54046ec4.png"></p>
+<p class="image-container"><img alt="logo" src="img/364c66c86f950678.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set up Google Play Products" duration="5">
+        <p>First, log in to the <a href="https://play.google.com/console" target="_blank">Google Play Console</a>, select your application, then navigate to <strong>Monetize with Play &gt; Products</strong> in the sidebar, and click on <strong>In-app products</strong> or <strong>Subscriptions</strong>, as shown in the image below.</p>
+<p class="image-container"><img alt="play_products" src="img/1afb78293fb81857.png"></p>
+<p>Basically, there are two types of products you can create on Google Play: <strong>In-app products</strong> and <strong>Subscriptions</strong>.</p>
+<h2 is-upgraded>In-app products</h2>
+<p>These are one-time purchases that unlock features or content permanently. Examples include removing ads, unlocking a premium feature, or purchasing in-game currency.</p>
+<p class="image-container"><img alt="in-app-purchases" src="img/c91a0e8bea528c52.png"></p>
+<p>When you click on <strong>In-app products</strong> in the sidebar, you&#39;ll see the screen shown above, where you can create a new in-app product that your users will be able to purchase.</p>
+<h2 is-upgraded>Subscriptions</h2>
+<p>These provide access to content or features for a recurring fee—either monthly, yearly, or custom periods. They&#39;re ideal for services like streaming content, premium app access, or regularly updated features.</p>
+<p class="image-container"><img alt="subscription" src="img/7aa26426c0ad68e6.png"></p>
+<p>When you create your subscription product, you can further customize it by adding subscription benefits, configuring a base plan, setting up offers (such as free trials or introductory pricing), and ultimately activating the product.</p>
+<p class="image-container"><img alt="subscription_details" src="img/21906ecef00c6780.png"></p>
+<p>Once you&#39;ve finished setting up your products on Google Play, you&#39;re all set! If you&#39;d like to dive deeper into creating in-app products or subscriptions, crafting reliable product IDs, setting up base plans and offers, or adding non-consumable items, check out the <a href="https://www.revenuecat.com/docs/getting-started/entitlements/android-products?utm_medium=organic&utm_source=codelab&utm_campaign=advocate" target="_blank">Google Play Product Setup</a> guide for detailed instructions and best practices.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connect Google Play to RevenueCat" duration="15">
+        <p>Next, you should set up your <a href="https://app.revenuecat.com/signup?utm_medium=organic&utm_source=codelab&utm_campaign=advocate" target="_blank">RevenueCat account</a> for managing the products, monetization, statistics, and more. All you need is just an email address.</p>
+<p>After creating your account on RevenueCat, configure a set of <a href="https://www.revenuecat.com/docs/service-credentials/creating-play-service-credentials?utm_medium=organic&utm_source=github&utm_campaign=advocate" target="_blank">Google Play Store service credentials</a> by following the instructions provided in the Google Play Store service credentials guide.</p>
+<p>This setup enables RevenueCat to integrate with your Google Play products, allowing you to seamlessly import store products into the RevenueCat dashboard, track purchase activity, analyze LTV reports, get user purchases notifications, and develop growth strategies using real-time data insights.</p>
+<p>To get started, follow the steps below:</p>
+<h2 is-upgraded>1. Enable the Google Developer and Reporting API</h2>
+<p>To activate both the Google Play Developer API and the Developer Reporting API in your Google Cloud project, follow these steps:</p>
+<ol type="1">
+<li>Open the <a href="https://console.developers.google.com/" target="_blank">Google Cloud Console</a>.</li>
+<li>Choose your existing project from the dropdown or start a new one.</li>
+<li>Visit the pages for the <a href="https://console.cloud.google.com/apis/library/androidpublisher.googleapis.com" target="_blank">Google Play Android Developer API</a> and the <a href="https://console.cloud.google.com/apis/library/playdeveloperreporting.googleapis.com" target="_blank">Google Play Developer Reporting API</a>.</li>
+<li>Click the <strong>Enable</strong> button on each page (it will display as <strong>Manage</strong> if already active).</li>
+</ol>
+<p class="image-container"><img alt="google_cloud" src="img/893e1433d9fa679e.gif"></p>
+<p>Once the APIs are enabled, you&#39;ll land on your project&#39;s API dashboard. If no credentials are configured yet, you&#39;ll be prompted to create them. Be sure to specify that the credentials are for use with the <a href="https://console.cloud.google.com/apis/library/androidpublisher.googleapis.com" target="_blank">Google Play Android Developer API</a>. This step should be completed by the project owner or by a team member who has the proper API access rights granted from the Google Play Console.</p>
+<h2 is-upgraded>2. Create a Service Account</h2>
+<p>Head over to the <a href="https://console.cloud.google.com/iam-admin/serviceaccounts" target="_blank">Service Accounts</a> section in your <a href="https://console.cloud.google.com/" target="_blank">Google Cloud Console</a>, and make sure you&#39;re working inside the correct project.</p>
+<p>From there, you&#39;ll need to generate a service account that RevenueCat can use to interface with Google services. Click on <strong>Create Service Account</strong>, give it a meaningful name, and proceed by selecting <strong>Create and continue</strong>.</p>
+<p>When prompted to assign roles, be sure to include the following:</p>
+<ul>
+<li><strong>Pub/Sub Editor</strong> – Required for handling Google&#39;s real-time server notifications.</li>
+<li><strong>Monitoring Viewer</strong> – Grants visibility into queue metrics and performance.</li>
+</ul>
+<p><strong>Note</strong>: If the search bar doesn&#39;t return the roles, you can manually locate them under the <strong>Pub/Sub</strong> and <strong>Monitoring</strong> categories in the list.</p>
+<p class="image-container"><img alt="credential_roles" src="img/7f309c4684ae607d.gif"></p>
+<p>Now it&#39;s time to generate the private key file.</p>
+<p>In the Service Accounts panel of your Google Cloud Console, find the service account you just created. Click the three-dot icon under the &#34;Actions&#34; column and choose <strong>Manage Keys</strong>.</p>
+<p>From there, hit <strong>Add Key</strong>, then choose <strong>Create new key</strong>. When the dialog appears, be sure to pick the <strong>JSON</strong> format before proceeding. Download the file—this JSON key will be needed later on in the setup process.</p>
+<p class="image-container"><img alt="cloud_private_key" src="img/5dd3e52df5902368.gif"></p>
+<h2 is-upgraded>3. Grant Financial Access to RevenueCat</h2>
+<p>Head over to the <strong>Users and Permissions</strong> section in your Google Play Console. Once there, click <strong>Invite user</strong> to add the service account email you created earlier (Step 2).</p>
+<p>Next, under <strong>App permissions</strong>, make sure to select the specific app you want RevenueCat to access. Then scroll down to the <strong>Account permissions</strong> area—this is where you&#39;ll grant the required access for everything to run smoothly.</p>
+<p>Make sure the following permissions are checked:</p>
+<ul>
+<li>Read app details and access bulk report downloads</li>
+<li>Access financial data, order history, and cancellation feedback</li>
+<li>Manage subscriptions and customer orders</li>
+</ul>
+<p>Once everything looks good, scroll to the bottom and click <strong>Send invite</strong>. After sending, you&#39;ll be taken back to the Users and Permissions overview, where you should see your service account listed with active status once it&#39;s accepted.</p>
+<p class="image-container"><img alt="financial_access" src="img/141a855884b3389.gif"></p>
+<h2 is-upgraded>4. Register the Credentials JSON in RevenueCat</h2>
+<p>To wrap things up, head over to your <a href="https://app.revenuecat.com/signup?utm_medium=organic&utm_source=codelab&utm_campaign=advocate" target="_blank">RevenueCat dashboard</a> and open your project settings. Locate the JSON credentials file you saved earlier (from Step 2), and either drag and drop it into the setup area or browse for it manually using the file picker.</p>
+<p>Once uploaded, don&#39;t forget to hit <strong>Save</strong> to apply the changes. RevenueCat will begin verifying your credentials, and <strong>within roughly 36 hours</strong>, you&#39;ll be all set to start processing Google Play purchases through your integration.</p>
+<p>You can verify your credentials by clicking the <strong>&#34;Validate Credentials&#34;</strong> button, as shown below:</p>
+<p class="image-container"><img alt="validation1" src="img/6b84f45942442cee.png"></p>
+<p>A summary will appear, displaying the results of the validation and giving you insight into the current status of your Google credentials. If everything is set up correctly, you&#39;ll see a <strong>&#34;Valid credentials&#34;</strong> message beneath your uploaded JSON file, along with a checklist of all the required permissions.</p>
+<p class="image-container"><img alt="validation2" src="img/606bc27c8a5409cd.png"></p>
+<h2 is-upgraded>5. Upload your signed APK or Android App Bundle</h2>
+<p>Once you&#39;ve completed the previous steps, there are a few final checks to make sure everything is wired up correctly:</p>
+<ol type="1">
+<li>Confirm that your signed APK or App Bundle has been successfully uploaded to the Google Play Console.</li>
+<li>Ensure your release has gone through all required review and approval steps.</li>
+<li>Verify that your app is available in either the <strong>Closed</strong> or <strong>Open</strong> testing track, and that you&#39;ve added at least one tester account.</li>
+<li>Double-check that your subscription products are marked as <strong>Active</strong> in the Play Console.</li>
+<li>Lastly, make sure the <strong>package name</strong> you&#39;re using in RevenueCat matches exactly—character for character—with the one registered in Google Play.</li>
+</ol>
+<p>These final validations are essential to avoid setup issues and ensure RevenueCat can sync seamlessly with your Google Play data.</p>
+<p>Phew, Congrats! You made it through the tricky part 🎉</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Product, Offering, Package, and Entitlement" duration="6">
+        <p>At this point, most of the complex setup is behind you. Now it&#39;s time to get familiar with four essential concepts in RevenueCat that you&#39;ll need to understand before configuring your monetization strategy: <strong>Product</strong>, <strong>Offering</strong>, <strong>Package</strong>, and <strong>Entitlement</strong>.</p>
+<p>Each of these plays a unique role in how you define, present, and manage your in-app purchases across platforms.</p>
+<h2 is-upgraded>🧩 Product</h2>
+<p>A Product is an individual in-app purchase item created and managed directly in the store platforms such as the Google Play, Apple App Store, or on the web. This is the base unit of monetization—think monthly subscriptions, lifetime access, or one-time purchases. Each product has its own unique identifier, price, and duration settings defined by the store.</p>
+<p>Example: A monthly subscription product like <code>com.app.pro_monthly</code> configured in the Google Play.</p>
+<h2 is-upgraded>🎯 Offering</h2>
+<p>An Offering is a collection of products grouped together to be presented as a paywall experience in your app. Offerings are configured in the RevenueCat dashboard and give you flexibility in managing A/B testing, price experiments, and regional or user-segmented paywalls, all without requiring app updates.</p>
+<p>Example: An offering named <code>default</code> might contain several packages like a monthly, annual, and lifetime option shown to users.</p>
+<h2 is-upgraded>📦 Package</h2>
+<p>A Package acts as a wrapper for equivalent products across different platforms (e.g., iOS, Android, Web). It allows you to present one pricing option (like a monthly subscription) consistently across platforms, while linking it to each store&#39;s specific product ID.</p>
+<p>Each package has a unique identifier (e.g., <code>monthly</code>, <code>annual</code>) within an offering, and helps RevenueCat resolve the correct product based on the user&#39;s platform.</p>
+<p>Example: A <code>monthly</code> package might map to <code>com.app.pro_monthly_ios</code> on iOS and <code>com.app.pro_monthly_android</code> on Android.</p>
+<h2 is-upgraded>🏷️ Entitlement</h2>
+<p>An Entitlement defines what the user gains access to after a successful purchase. It represents the features or content unlocked, and abstracts away the underlying product or package identifiers. Entitlements allow you to manage user access logic (e.g., &#34;has premium access&#34;) without hardcoding product IDs into your app.</p>
+<p>They are also central to how RevenueCat tracks and restores purchases across devices and platforms.</p>
+<p>Example: An entitlement called <code>premium</code> might be granted to users who purchase any product associated with that access level, such as monthly or yearly subscriptions.</p>
+<h2 is-upgraded>Cheat Sheet</h2>
+<p>Understanding how these four elements work together will make it easier to manage cross-platform subscriptions, experiment with pricing strategies, and deliver a seamless in-app purchase experience.</p>
+<p>For easier understanding, you can refer to the visual diagram in the RevenueCat In-App Purchases Cheat Sheet below:</p>
+<p class="image-container"><img alt="products-cheat-sheet" src="img/be12a4814590fac8.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Import Store Products" duration="3">
+        <p>To get started, go to the <strong>RevenueCat dashboard</strong>, navigate to your project, and open the <strong>Products</strong> tab under <strong>Project Settings</strong>.</p>
+<p>Click the <strong>➕ New</strong> button in the top right corner, then select <strong>Import Products</strong> from the dropdown menu. RevenueCat will automatically fetch and display a list of available in-app products from your connected store accounts (such as the App Store or Google Play).</p>
+<p class="image-container"><img alt="import_products" src="img/41839fbc69d8839c.png"></p>
+<p>Once your products have been imported, you&#39;ll see that the in-app purchase items have been successfully added to your RevenueCat project.</p>
+<p class="image-container"><img alt="imported" src="img/5eb60b467a5df05f.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Entitlements" duration="5">
+        <p>Now that you&#39;ve imported or created products, it&#39;s time to set up <strong>entitlements</strong>. As you&#39;ve learned, entitlements define what a user gains access to after a successful purchase. A &#34;purchase&#34; can refer to any type of in-app transaction—such as one-time purchases or subscriptions—that users make to access your service.</p>
+<p>Typically, you&#39;ll want to create one or more entitlements based on your <strong>feature access tiers</strong> (e.g., <code>"has_premium_access"</code>). These entitlements let you control access to gated features or content within your app.</p>
+<p>To create a new entitlement:</p>
+<ol type="1">
+<li>Go to the <strong>Product Catalog</strong> in the left menu of your project dashboard.</li>
+<li>Click the <strong>Entitlements</strong> tab.</li>
+<li>Select <strong>➕ New Entitlement</strong>.</li>
+</ol>
+<p class="image-container"><img alt="create_entitlement" src="img/697e35f2f75c159b.png"></p>
+<p>You&#39;ll be prompted to enter a <strong>unique identifier</strong> for your entitlement (e.g., <code>"pro"</code>), which you&#39;ll later reference in your app to check a user&#39;s access level.</p>
+<p>Most apps use a single entitlement, but you can create multiple if needed. For example, a <strong>navigation app</strong> might offer a subscription for full access (<code>"pro"</code>) and also sell one-time purchases to unlock specific map regions. In that case, you&#39;d likely have one <code>"pro"</code> entitlement, along with additional entitlements for each region (e.g., <code>"map_north_america"</code>, <code>"map_europe"</code>).</p>
+<h2 is-upgraded>Attaching Products to Entitlements</h2>
+<p>Now it&#39;s time to <strong>attach products to entitlements</strong>, which links your in-app purchases to the access they unlock. This setup ensures that when a user purchases a product, they are granted the corresponding entitlement—giving them access to specific features or content in your app.</p>
+<p>For example, you can easily implement gated features using a simple <code>if</code> statement that checks whether the user has a given entitlement.</p>
+<p>To attach a product to an entitlement:</p>
+<ol type="1">
+<li>Open the <strong>Entitlements</strong> tab in the RevenueCat dashboard.</li>
+<li>Click on the entitlement you want to configure.</li>
+<li>Click the <strong>Attach</strong> button.</li>
+<li>If you&#39;ve already added your products, you&#39;ll see them in a list—just select the one you want to link.</li>
+</ol>
+<p class="image-container"><img alt="attach_entitlement" src="img/8c0757f597b792db.png"></p>
+<p>When a product attached to an entitlement is purchased, the <strong>entitlement becomes active for the duration of that product</strong>.</p>
+<ul>
+<li>For <strong>subscription products</strong>, the entitlement remains active for the length of the subscription period.</li>
+<li>For <strong>non-consumable</strong> or <strong>consumable</strong> purchases (when attached to an entitlement), the entitlement typically unlocks the content <strong>permanently</strong>.</li>
+</ul>
+<p>This mechanism allows you to manage feature access based on purchase type without having to handle complex logic in your app.</p>
+<p>If you don&#39;t plan to implement <a href="https://www.revenuecat.com/docs/tools/paywalls" target="_blank">Paywalls</a> in your app, you can skip ahead to the <strong>Conclusion</strong> section. Otherwise, continue to the next step to learn how to create Offerings.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Offerings (Optional)" duration="7">
+        <p>If you want to introduce <a href="https://www.revenuecat.com/docs/tools/paywalls" target="_blank">Paywalls</a> in your app, the first step is to create Offerings.</p>
+<p>An Offering represents a set of products that are presented to users on your paywall—essentially the options that are &#34;offered&#34; for purchase.</p>
+<p>For example, you might offer your users the following choices:</p>
+<ul>
+<li>Subscribe to the <strong>Pro plan</strong> for <strong>$10/month</strong>, or</li>
+<li>Get a better deal by subscribing <strong>annually for $80/year</strong>.</li>
+</ul>
+<p>Offerings allow you to group these products together and control how they&#39;re displayed and tested within your app.</p>
+<p class="image-container"><img alt="create_offering" src="img/bd8c95b8fe6a8ec9.png"></p>
+<p>When creating an Offering, you&#39;ll need to add one or more Packages. Each Offering should include at least one Package that groups together equivalent products across platforms (e.g., iOS, Android, Web).</p>
+<h2 is-upgraded>Adding Packages</h2>
+<p>A Package serves as a wrapper for equivalent products across different platforms (e.g., iOS, Android, Web). This provides a single source of truth for your products across platforms.</p>
+<p>For example, if a user purchases a product on Android, they can still access the same entitlement on their iOS device, as long as they&#39;re logged into the same account.</p>
+<p>Here&#39;s a refined version of your paragraph with clearer structure, improved grammar, and smoother phrasing:</p>
+<p>To create a package, navigate to your newly created <strong>Offering</strong>, then click <strong>+ Add Package</strong> in the <strong>Packages</strong> section.</p>
+<p>From there:</p>
+<ol type="1">
+<li><strong>Choose an Identifier</strong> from the dropdown that best represents the package duration (e.g., monthly, annual).</li>
+<li>If none of the predefined durations fit—such as in the case of <strong>consumable purchases</strong>—you can select a <strong>custom identifier</strong> instead.</li>
+<li><strong>Add a description</strong> to help clarify the purpose or contents of the package.</li>
+<li><strong>Attach the relevant products</strong> that match the chosen duration (e.g., monthly products across iOS and Android).</li>
+<li>Click <strong>Save</strong> to create the package.</li>
+</ol>
+<p class="image-container"><img alt="list_packages" src="img/21833654c2bc0ea3.png"></p>
+<p>Once you&#39;ve added all the Packages to your Offering, you&#39;ll see the results displayed as shown below:</p>
+<p class="image-container"><img alt="add_packages" src="img/69bddbd8b1ed045e.png"></p>
+<h2 is-upgraded>The releationships between Offerings and Packages</h2>
+<p>So, an Offering can contain multiple Packages, allowing you to &#34;offer&#34; different options to users. This means you can present various choices—such as monthly, annual, or lifetime plans—all within a single Offering, as illustrated in the diagram below:</p>
+<pre><code>             Offering (e.g. &#34;pro plan&#34;)
+                    |
+       --------------------------------
+       |              |              |
+   Package A      Package B      Package C
+   (&#34;monthly&#34;)    (&#34;annual&#34;)    (&#34;lifetime&#34;)
+       |              |              |
+ Product A1      Product B1      Product C1
+ (iOS/Android)   (iOS/Android)   (iOS/Android)
+
+</code></pre>
+<p>Alright, time to create some awesome Paywalls!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Paywalls (Optional)" duration="7">
+        <p>A paywall is a screen that restricts access to certain features and encourages users to subscribe or purchase your products. RevenueCat&#39;s paywall system is built on a server-driven UI, allowing teams to update layouts without going through the traditional release cycle—such as modifying code, publishing to Google Play, waiting for review, and requiring users to update the app. Instead, layout changes can be made instantly using the <a href="https://www.revenuecat.com/docs/tools/paywalls-v2/creating-paywalls#using-the-editor" target="_blank">Paywall Editor</a>.</p>
+<p class="image-container"><img alt="paywall_editor" src="img/bb98860f4bb387d2.gif"></p>
+<p>One of the biggest advantages of using the RevenueCat SDK for building paywalls is the ability to iterate quickly—your team can focus on A/B testing, refining offerings, experimenting with UI layouts, and optimizing messaging strategies to boost subscriptions, all without the delays of app updates, review processes, or waiting for users to install new versions. If you want to deep dive into the server-driven UI approach, you can read <a href="https://www.revenuecat.com/blog/engineering/server-driven-android/" target="_blank">Server-driven UI SDK on Android: how RevenueCat enables remote paywalls without app updates</a>.</p>
+<h2 is-upgraded>Building Paywalls</h2>
+<p>To start building paywalls using our new editor, go to the <strong>Paywalls</strong> page for your project and click <strong>➕ New Paywall</strong> in the callout section.</p>
+<p class="image-container"><img alt="create_paywalls" src="img/dd33b9b8059ac334.png"></p>
+<p>Next, you&#39;ll see a list of pre-built templates that you can use to quickly start building your own paywall screen. You can choose one of these templates as a starting point or begin from scratch if you prefer full customization.</p>
+<p class="image-container"><img alt="paywall_template" src="img/d6842356c1b22f56.png"></p>
+<p>Once you&#39;ve selected a template or chosen to start from scratch, you&#39;ll be taken to the paywall editor screen shown below. From there, you&#39;ll need to set a name for your paywall and select an identifier, which will automatically link the paywall to the corresponding Offering.</p>
+<p class="image-container"><img alt="paywall_edits" src="img/dadc30c166d40afb.png"></p>
+<p>Once you&#39;ve finished editing your paywall, click &#34;Save to draft&#34; to save your changes. When you&#39;re ready to go live, click &#34;Publish changes&#34; to officially publish your first paywall.</p>
+<p>🎉 Yay! You&#39;ve completed all the configuration steps for setting up Google Play products and the RevenueCat dashboard—you&#39;re now ready to integrate the RevenueCat SDK into your mobile project!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="0">
+        <p>In this codelab, you&#39;ve learned how to configure Google Play products, connect your Google Play account to the RevenueCat dashboard, and set up products, offerings, entitlements, and paywalls. With everything now configured, you&#39;re ready to integrate the RevenueCat SDK into your project!</p>
+<p>Up next:</p>
+<p><a href="https://revenuecat.github.io/codelab-internal-testing/android/codelab-2-android-sdk/index.html" target="_blank">Integrating RevenueCat SDK for In-App Purchases and Paywalls</a> — your next step toward a fully functional monetization flow.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script src="./ga.js"></script>
+
+</body>
+</html>
