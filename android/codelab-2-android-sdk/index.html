@@ -1,0 +1,210 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Android In-App Purchases &amp; Paywalls</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  codelab-ga4id=""
+                  id="codelab-2-android-sdk"
+                  title="Android In-App Purchases &amp; Paywalls"
+                  environment="web"
+                  feedback-link="https://github.com/revenuecat/codelab/issues/new">
+    
+      <google-codelab-step label="Android In-App Purchases &amp; Paywalls Overview" duration="2">
+        <p>Welcome to <a href="https://www.revenuecat.com/" target="_blank">RevenueCat</a>&#39;s Android SDK Codelab!</p>
+<p>In this codelab, you will:</p>
+<ul>
+<li>Integrate the <strong>RevenueCat SDK</strong> into your project</li>
+<li>Implement <strong>in-app purchases</strong> in your Android application</li>
+<li>Learn how to <strong>distinguish between paying and non-paying users</strong></li>
+<li>Build a <strong>paywall screen</strong>, which is based on <strong>server-driven UI</strong> approach</li>
+</ul>
+<p>By the end of this codelab, you&#39;ll be able to successfully implement in-app purchases in your Android app and display dynamic paywalls using RevenueCat&#39;s Android SDK.</p>
+<p class="image-container"><img alt="overview" src="img/686cb99007ad736e.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Import RevenueCat SDK" duration="5">
+        <p>First things first, before implementing in-app purchases, you&#39;ll need to import the RevenueCat SDK into your existing or new project. To get started, add the following dependency to your <code>build.gradle.kts</code> file:</p>
+<p>You can check out the <a href="https://github.com/RevenueCat/purchases-android/releases" target="_blank">latest release version on GitHub</a>.</p>
+<pre><code language="language-gradle" class="language-gradle">implementation(&#34;com.revenuecat.purchases:purchases:8.20.0&#34;)
+</code></pre>
+<p>If you&#39;re also planning to implement Paywalls, you can simply include the following dependency instead:</p>
+<pre><code language="language-gradle" class="language-gradle">implementation(&#34;com.revenuecat.purchases:purchases-ui:8.20.0&#34;)
+</code></pre>
+<p>Next, initialize the Purchases SDK in your <a href="https://github.com/RevenueCat/cat-paywall-compose/blob/main/app/src/main/kotlin/com/revenuecat/articles/paywall/compose/CatArticlesApp.kt" target="_blank">Application class</a> using the code below:</p>
+<pre><code language="language-kotlin" class="language-kotlin">/**
+ * Initialize the RevenueCat Purchases SDK.
+ *
+ * `appUserID` is nil, so an anonymous ID will be generated automatically by the Purchases SDK.
+ * Read more about Identifying Users here: https://docs.revenuecat.com/docs/user-ids
+ *
+ * `purchasesAreCompletedBy` is set to REVENUECAT, so Purchases will automatically handle finishing transactions.
+ * Read more about finishing transactions here: https://www.revenuecat.com/docs/migrating-to-revenuecat/sdk-or-not/finishing-transactions
+ */
+val builder = PurchasesConfiguration.Builder(this, &#34;REVENUECAT_API_KEY&#34;)
+Purchases.configure(
+  builder
+    .purchasesAreCompletedBy(PurchasesAreCompletedBy.REVENUECAT)
+    .appUserID(null)
+    .diagnosticsEnabled(true)
+    .build(),
+)
+</code></pre>
+<p>Yes! You&#39;ve now completed 50% of the implementation.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Validating Entitlements" duration="3">
+        <p>Now let&#39;s move on to validating user entitlements.</p>
+<p>As mentioned earlier, an entitlement represents the level of access or features a user unlocks after making a purchase. This makes it useful for determining things like whether to display an ad banner or grant premium access.</p>
+<p>You can easily check if a user has an active entitlement using the code snippet below:</p>
+<pre><code language="language-kotlin" class="language-kotlin">val ENTITLEMENT_IDENTIFIER = &#34;..&#34; // get specific entitlement identifier from your RevenueCat dashboard
+val customerInfo = Purchases.sharedInstance.awaitCustomerInfo()
+val isEntitled = customerInfo?.entitlements[ENTITLEMENT_IDENTIFIER]?.isActive == true
+</code></pre>
+<p>Once you&#39;ve checked whether the user has a specific entitlement, you can decide how to proceed based on your app&#39;s business model.</p>
+<p>For example, if your app is ad-supported, you might choose to show or hide an AdMob banner. Alternatively, you could choose to display a paywall or purchase dialog, allowing users to unlock advanced features or content.</p>
+<p>Here&#39;s an example of how you might implement that logic:</p>
+<pre><code language="language-kotlin" class="language-kotlin">@Composable
+fun ContentScreen(isEntitled: Boolean) {
+    if (isEntitled) {
+      // if the user is granted access to this entitlement. don&#39;t need to display a banner.
+    } else {
+      // display a banner UI here or display a paywall
+      ..
+    }
+}
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Implement In-App Purchases" duration="4">
+        <p>Now, let&#39;s implement in-app purchases to offer an ad-free experience. To get started, you&#39;ll first need to fetch the relevant product information from your RevenueCat dashboard. This product data will be used to present purchase options to your users.</p>
+<p>You can retrieve the available products by calling <code>Purchases.sharedInstance.awaitGetProducts()</code>, as shown in the example below:</p>
+<pre><code language="language-kotlin" class="language-kotlin">// fetches the product information from the RevenueCat server
+val products = Purchases.sharedInstance.awaitGetProducts(
+  productIds = listOf(&#34;paywall_tester.subs&#34;),
+)
+
+// proceed in-app purchases
+val purchaseResult = Purchases.sharedInstance.awaitPurchase(
+  purchaseParams = PurchaseParams.Builder(
+    activity = context as Activity,
+    storeProduct = products.first(),
+  ).build()
+)
+</code></pre>
+<p>If you offer multiple product variations, such as <code>paywall_tester.subs:weekly</code>, <code>paywall_tester.subs:monthly</code>, and <code>paywall_tester.subs:yearly</code>, you can simplify product retrieval by using the <strong>base product identifier</strong>, <code>paywall_tester.subs</code>, as the value for the <code>productIds</code> field. This tells RevenueCat to fetch <strong>all related product variations</strong> as a list, so you can dynamically present them in your paywall UI.</p>
+<p>Once you&#39;ve retrieved the product data, you can initiate the <strong>in-app purchase flow</strong> by calling <code>Purchases.sharedInstance.awaitPurchase(product)</code>. This will automatically trigger the <strong>Google Play purchase dialog</strong>, enabling the user to complete the transaction within your app.</p>
+<p>Just like that, you&#39;ve integrated a fully functional <strong>in-app purchase flow</strong> with just a few lines of code—no need to deal with the complexity of handling receipts, store APIs, or purchase validation manually.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Implement Paywalls" duration="7">
+        <p>Now, it&#39;s time to impement Paywalls in your Android project using Jetpack Compose.</p>
+<h2 is-upgraded>Business Logic</h2>
+<p>To begin, you&#39;ll need to <strong>fetch the current offering</strong> from the RevenueCat dashboard. An offering defines the available purchase options presented to the user, such as monthly, yearly, or lifetime plans. This can be done effortlessly using the <code>Purchases.sharedInstance.awaitOfferings()</code> method, as demonstrated in the example below.</p>
+<pre><code language="language-kotlin" class="language-kotlin">internal class DetailsRepositoryImpl @Inject constructor(
+  @Dispatcher(CatArticlesDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
+) : DetailsRepository {
+
+  override fun fetchOffering(): Flow&lt;ApiResponse&lt;Offering&gt;&gt; = flow {
+    try {
+      val offerings = Purchases.sharedInstance.awaitOfferings()
+      offerings.current?.let { currentOffering -&gt;
+        val response = ApiResponse.of { currentOffering }
+        emit(response)
+      }
+    } catch (e: PurchasesException) {
+      ApiResponse.exception(e)
+    }
+  }.flowOn(ioDispatcher)
+}
+</code></pre>
+<p>The RevenueCat Android SDK has <strong>native support for Kotlin coroutines</strong>, making it a seamless fit for projects using a coroutine-based architecture. The current offering is also exposed as a <strong>Flow</strong>, allowing you to observe changes reactively and update your UI accordingly.</p>
+<h2 is-upgraded>Paywalls UI With Jetpack Compose</h2>
+<p>At this point, everything should be ready to go. If you&#39;ve already added the <code>com.revenuecat.purchases:purchases-ui</code> SDK, you can <strong>easily build paywall UIs using Jetpack Compose</strong>.</p>
+<p>RevenueCat&#39;s UI library provides built-in components, such as <code>PaywallDialog</code> that allow you to <strong>quickly display a paywall screen or dialog</strong>. These components are fully customizable, offering a variety of configuration options to tailor the look and behavior to match your app&#39;s design.</p>
+<p>Here&#39;s an example showing how simple it is to implement and customize a paywall using Jetpack Compose:</p>
+<pre><code language="language-kotlin" class="language-kotlin">val offering by viewModel.offering.collectAsState()
+
+PaywallDialog(
+   PaywallDialogOptions.Builder()
+       .setDismissRequest {  }
+       .setOffering(offering)
+       .setFontProvider(..)
+       .setCustomPurchaseLogic(..)
+       .setListener(object : PaywallListener {
+           override fun onPurchaseStarted(rcPackage: Package) {
+               super.onPurchaseStarted(rcPackage)
+           }
+
+           override fun onPurchaseCompleted(customerInfo: CustomerInfo, storeTransaction: StoreTransaction) {
+               super.onPurchaseCompleted(customerInfo, storeTransaction)
+
+               customer = customerInfo
+           }
+
+           override fun onPurchaseError(error: PurchasesError) {
+               super.onPurchaseError(error)
+           }
+
+           override fun onPurchaseCancelled() {
+               super.onPurchaseCancelled()
+           }
+       })
+       .build()
+)
+</code></pre>
+<p>Configuration! 🥳 Now, you&#39;ll be able to display paywalls whenever a user doesn&#39;t have the required entitlement, using the exact same design you configured in the Paywall Editor.</p>
+<p>As you&#39;ve already seen in the <a href="https://revenuecat.github.io/codelab-internal-testing/google-play/codelab-1-google-play-integration/index.html#7" target="_blank">Codelab: RevenueCat Google Play Integration (Create Paywalls)</a>, the paywall system is built on a <strong>server-driven UI</strong>. This means you can dynamically update the paywall&#39;s content and design directly from the dashboard without needing to push app updates or go through the review process.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="0">
+        <p>In this codelab, you&#39;ve learned how to integrate RevenueCat&#39;s Android SDK, implement in-app purchases, and build paywalls in Jetpack Compose. Now it&#39;s time to ship your app and make more money! 💰</p>
+<p>You can also learn more about using the RevenueCat SDK in your Android project with Jetpack Compose through the resources below:</p>
+<ul>
+<li><a href="https://github.com/RevenueCat/cat-paywall-compose/" target="_blank">GitHub: Cat Paywall Compose</a></li>
+<li><a href="https://www.revenuecat.com/blog/engineering/ad-free-subscriptions-android/" target="_blank">How to monetize Android apps with ad-free subscriptions using RevenueCat</a></li>
+<li><a href="https://www.revenuecat.com/blog/engineering/build-paywalls-compose/" target="_blank">Turn Your App into Revenue: Building Paywalls in Android With Jetpack Compose</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+  <script src="./ga.js"></script>
+
+</body>
+</html>
