@@ -223,7 +223,7 @@ val purchaseResult = Purchases.sharedInstance.awaitPurchase(
       </google-codelab-step>
     
       <google-codelab-step label="Implement Paywalls" duration="7">
-        <p>Now, it&#39;s time to impement Paywalls in your KMP project using Jetpack Compose.</p>
+        <p>Now, it&#39;s time to impement Paywalls in your KMP project using Compose Multiplatform.</p>
 <h2 is-upgraded>Business Logic</h2>
 <p>To begin, you&#39;ll need to <strong>fetch the current offering</strong> from the RevenueCat dashboard. An offering defines the available purchase options presented to the user, such as monthly, yearly, or lifetime plans. This can be done effortlessly using the <code>Purchases.sharedInstance.awaitOfferings()</code> method, as demonstrated in the example below.</p>
 <pre><code language="language-kotlin" class="language-kotlin">internal class DetailsRepositoryImpl : DetailsRepository {
@@ -242,10 +242,10 @@ val purchaseResult = Purchases.sharedInstance.awaitPurchase(
 }
 </code></pre>
 <p>The RevenueCat KMP SDK has <strong>native support for Kotlin coroutines</strong>, making it a seamless fit for projects using a coroutine-based architecture. The current offering is also exposed as a <strong>Flow</strong>, allowing you to observe changes reactively and update your UI accordingly.</p>
-<h2 is-upgraded>Paywalls UI With Jetpack Compose</h2>
-<p>At this point, everything should be ready to go. If you&#39;ve already added the <code>com.revenuecat.purchases:purchases-kmp-ui</code> SDK, you can <strong>easily build paywall UIs using Jetpack Compose</strong>.</p>
+<h2 is-upgraded>Paywalls UI With Compose Multiplatform</h2>
+<p>At this point, everything should be ready to go. If you&#39;ve already added the <code>com.revenuecat.purchases:purchases-kmp-ui</code> SDK, you can <strong>easily build paywall UIs using Compose Multiplatform</strong>.</p>
 <p>RevenueCat&#39;s UI library provides built-in components, such as <code>PaywallDialog</code> that allow you to <strong>quickly display a paywall screen or dialog</strong>. These components are fully customizable, offering a variety of configuration options to tailor the look and behavior to match your app&#39;s design.</p>
-<p>Here&#39;s an example showing how simple it is to implement and customize a paywall using Jetpack Compose:</p>
+<p>Here&#39;s an example showing how simple it is to implement and customize a paywall using Compose Multiplatform:</p>
 <pre><code language="language-kotlin" class="language-kotlin">val currentOffering by viewModel.offering.collectAsState()
 
 val options = remember {
@@ -264,7 +264,7 @@ Paywall(options)
       </google-codelab-step>
     
       <google-codelab-step label="Conclusion" duration="0">
-        <p>In this codelab, you&#39;ve learned how to integrate RevenueCat&#39;s KMP SDK, implement in-app purchases, and build paywalls in Jetpack Compose. Now it&#39;s time to ship your app and make more money! 💰</p>
+        <p>In this codelab, you&#39;ve learned how to integrate RevenueCat&#39;s KMP SDK, implement in-app purchases, and build paywalls in Compose Multiplatform. Now it&#39;s time to ship your app and make more money! 💰</p>
 
 
       </google-codelab-step>

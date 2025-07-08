@@ -241,7 +241,7 @@ Just like that, you've integrated a fully functional **in-app purchase flow** wi
 ## Implement Paywalls
 Duration: 0:07:00
 
-Now, it's time to impement Paywalls in your KMP project using Jetpack Compose.
+Now, it's time to impement Paywalls in your KMP project using Compose Multiplatform.
 
 ### Business Logic
 
@@ -266,13 +266,13 @@ internal class DetailsRepositoryImpl : DetailsRepository {
 
 The RevenueCat KMP SDK has **native support for Kotlin coroutines**, making it a seamless fit for projects using a coroutine-based architecture. The current offering is also exposed as a **Flow**, allowing you to observe changes reactively and update your UI accordingly.
 
-### Paywalls UI With Jetpack Compose
+### Paywalls UI With Compose Multiplatform
 
-At this point, everything should be ready to go. If you’ve already added the `com.revenuecat.purchases:purchases-kmp-ui` SDK, you can **easily build paywall UIs using Jetpack Compose**.
+At this point, everything should be ready to go. If you’ve already added the `com.revenuecat.purchases:purchases-kmp-ui` SDK, you can **easily build paywall UIs using Compose Multiplatform**.
 
 RevenueCat’s UI library provides built-in components, such as `PaywallDialog` that allow you to **quickly display a paywall screen or dialog**. These components are fully customizable, offering a variety of configuration options to tailor the look and behavior to match your app’s design.
 
-Here’s an example showing how simple it is to implement and customize a paywall using Jetpack Compose:
+Here’s an example showing how simple it is to implement and customize a paywall using Compose Multiplatform:
 
 ```kotlin
 val currentOffering by viewModel.offering.collectAsState()
@@ -293,4 +293,4 @@ As you’ve already seen in the [Codelab: RevenueCat Google Play Integration (Cr
 
 ## Conclusion
 
-In this codelab, you’ve learned how to integrate RevenueCat’s KMP SDK, implement in-app purchases, and build paywalls in Jetpack Compose. Now it’s time to ship your app and make more money! 💰
+In this codelab, you’ve learned how to integrate RevenueCat’s KMP SDK, implement in-app purchases, and build paywalls in Compose Multiplatform. Now it’s time to ship your app and make more money! 💰
