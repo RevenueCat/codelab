@@ -18,6 +18,15 @@ In this codelab, you will:
 - Integrate the Android RevenueCat SDK into your project
 - Implement in-app purchases in your Android application
 - Learn how to distinguish between paying and non-paying users
+- Build a paywall screen, which is based on the server-driven UI approach
+
+## [Kotlin Multiplatform Purchases & Paywalls Overview](https://revenuecat.github.io/codelab/kmp/codelab-3-kmp-sdk/index.html#0)
+
+In this codelab, you will:
+
+- Integrate the RevenueCat SDK into your Kotlin Multiplatform project
+- Implement in-app purchases in your KMP application
+- Learn how to distinguish between paying and non-paying users
 - Build a paywall screen, which is based on server-driven UI approach
 
 # License
