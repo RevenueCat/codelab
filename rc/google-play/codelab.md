@@ -356,4 +356,5 @@ In this codelab, you’ve learned how to configure Google Play products, connect
 
 Up next:
 
-[Integrating RevenueCat SDK for In-App Purchases and Paywalls](https://revenuecat.github.io/codelab-internal-testing/android/codelab-2-android-sdk/index.html) — your next step toward a fully functional monetization flow.
+- [Integrating RevenueCat Android SDK for In-App Purchases and Paywalls](https://revenuecat.github.io/codelab-internal-testing/android/codelab-2-android-sdk/index.html) — your next step toward a fully functional monetization flow.
+- [Integrating RevenueCat Kotlin Multiplatform SDK for In-App Purchases and Paywalls](https://revenuecat.github.io/codelab/kmp/codelab-3-kmp-sdk/index.html#0)  — your next step toward a fully functional monetization flow for your KMP/CMP project
