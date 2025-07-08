@@ -15,7 +15,7 @@ Welcome to [RevenueCat](https://www.revenuecat.com/)'s KMP (Kotlin Multiplatform
 
 In this codelab, you will:
 
-* Integrate the **RevenueCat SDK** into your Kotlin Multiplatform project
+* Integrate the **[RevenueCat KMP SDK](https://www.revenuecat.com/docs/getting-started/installation/kotlin-multiplatform)** into your Kotlin Multiplatform project
 * Implement **in-app purchases** in your KMP application
 * Learn how to **distinguish between paying and non-paying users**
 * Build a **paywall screen**, which is based on **server-driven UI** approach
@@ -152,9 +152,12 @@ target 'iosApp' do
 end 
 ```
 
-## Initialization
+You’ve successfully imported the RevenueCat SDK. Now, let’s move on to the initialization step.
 
-Now it’s time to initialize the Purchases SDK in your project. Be sure to configure Purchases using **only your public API key**, which you can find by navigating to your app’s settings under **Project Settings > Platforms**.
+## Initialization
+Duration: 0:02:00
+
+Now, it’s time to initialize the Purchases SDK in your project. Be sure to configure Purchases using **only your public API key**, which you can find by navigating to your app’s settings under **Project Settings > Platforms**.
 
 ```kotlin
 import com.revenuecat.purchases.kmp.LogLevel
@@ -225,10 +228,7 @@ val products = Purchases.sharedInstance.awaitGetProducts(
 
 // proceed in-app purchases
 val purchaseResult = Purchases.sharedInstance.awaitPurchase(
-  purchaseParams = PurchaseParams.Builder(
-    activity = context as Activity,
-    storeProduct = products.first(),
-  ).build()
+  storeProduct = products.first()
 )
 ```
 
