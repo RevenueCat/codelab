@@ -32,7 +32,7 @@
         <p>Welcome to <a href="https://www.revenuecat.com/" target="_blank">RevenueCat</a>&#39;s KMP (Kotlin Multiplatform) SDK Codelab!</p>
 <p>In this codelab, you will:</p>
 <ul>
-<li>Integrate the <strong>RevenueCat SDK</strong> into your Kotlin Multiplatform project</li>
+<li>Integrate the <a href="https://www.revenuecat.com/docs/getting-started/installation/kotlin-multiplatform" target="_blank"><strong>RevenueCat KMP SDK</strong></a> into your Kotlin Multiplatform project</li>
 <li>Implement <strong>in-app purchases</strong> in your KMP application</li>
 <li>Learn how to <strong>distinguish between paying and non-paying users</strong></li>
 <li>Build a <strong>paywall screen</strong>, which is based on <strong>server-driven UI</strong> approach</li>
@@ -149,12 +149,13 @@ kotlin-cocoapods = { id = &#34;org.jetbrains.kotlin.native.cocoapods&#34;, versi
   end
 end 
 </code></pre>
+<p>You&#39;ve successfully imported the RevenueCat SDK. Now, let&#39;s move on to the initialization step.</p>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="Initialization" duration="0">
-        <p>Now it&#39;s time to initialize the Purchases SDK in your project. Be sure to configure Purchases using <strong>only your public API key</strong>, which you can find by navigating to your app&#39;s settings under <strong>Project Settings &gt; Platforms</strong>.</p>
+      <google-codelab-step label="Initialization" duration="2">
+        <p>Now, it&#39;s time to initialize the Purchases SDK in your project. Be sure to configure Purchases using <strong>only your public API key</strong>, which you can find by navigating to your app&#39;s settings under <strong>Project Settings &gt; Platforms</strong>.</p>
 <pre><code language="language-kotlin" class="language-kotlin">import com.revenuecat.purchases.kmp.LogLevel
 import com.revenuecat.purchases.kmp.Purchases
 import com.revenuecat.purchases.kmp.configure
@@ -211,10 +212,7 @@ val products = Purchases.sharedInstance.awaitGetProducts(
 
 // proceed in-app purchases
 val purchaseResult = Purchases.sharedInstance.awaitPurchase(
-  purchaseParams = PurchaseParams.Builder(
-    activity = context as Activity,
-    storeProduct = products.first(),
-  ).build()
+  storeProduct = products.first()
 )
 </code></pre>
 <p>If you offer multiple product variations, such as <code>paywall_tester.subs:weekly</code>, <code>paywall_tester.subs:monthly</code>, and <code>paywall_tester.subs:yearly</code>, you can simplify product retrieval by using the <strong>base product identifier</strong>, <code>paywall_tester.subs</code>, as the value for the <code>productIds</code> field. This tells RevenueCat to fetch <strong>all related product variations</strong> as a list, so you can dynamically present them in your paywall UI.</p>
