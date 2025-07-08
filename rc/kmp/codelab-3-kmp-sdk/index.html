@@ -1,0 +1,283 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>KMP In-App Purchases &amp; Paywalls</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  codelab-ga4id=""
+                  id="codelab-3-kmp-sdk"
+                  title="KMP In-App Purchases &amp; Paywalls"
+                  environment="web"
+                  feedback-link="https://github.com/revenuecat/codelab/issues/new">
+    
+      <google-codelab-step label="Kotlin Multiplatform Purchases &amp; Paywalls Overview" duration="2">
+        <p>Welcome to <a href="https://www.revenuecat.com/" target="_blank">RevenueCat</a>&#39;s KMP (Kotlin Multiplatform) SDK Codelab!</p>
+<p>In this codelab, you will:</p>
+<ul>
+<li>Integrate the <strong>RevenueCat SDK</strong> into your Kotlin Multiplatform project</li>
+<li>Implement <strong>in-app purchases</strong> in your KMP application</li>
+<li>Learn how to <strong>distinguish between paying and non-paying users</strong></li>
+<li>Build a <strong>paywall screen</strong>, which is based on <strong>server-driven UI</strong> approach</li>
+</ul>
+<p>By the end of this codelab, you&#39;ll be able to successfully implement in-app purchases in your KMP app and display dynamic paywalls using RevenueCat&#39;s KMP SDK.</p>
+<p class="image-container"><img alt="overview" src="img/686cb99007ad736e.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Import RevenueCat SDK" duration="7">
+        <p>First things first, before implementing in-app purchases, you&#39;ll need to import the RevenueCat SDK into your existing or new project. To get started, add the following dependency to your <code>build.gradle.kts</code> file:</p>
+<p>You can check out the <a href="https://github.com/RevenueCat/purchases-kmp/releases" target="_blank">latest release version on GitHub</a>.</p>
+<pre><code language="language-gradle" class="language-gradle">[versions] 
+purchases-kmp = &#34;1.8.6+14.0.2&#34;
+
+[libraries]
+purchases-core = { module = &#34;com.revenuecat.purchases:purchases-kmp-core&#34;, version.ref = &#34;purchases-kmp&#34; }
+purchases-ui = { module = &#34;com.revenuecat.purchases:purchases-kmp-ui&#34;, version.ref = &#34;purchases-kmp&#34; }
+</code></pre>
+<p>You can now add the dependency to your <code>commonMain</code> source set in your module&#39;s build.gradle.kts.</p>
+<pre><code language="language-gradle" class="language-gradle">kotlin {
+    // ...
+    sourceSets {
+        // ...
+        commonMain.dependencies {  
+            // Add the purchases-kmp dependencies.
+            implementation(libs.purchases.core)  
+            implementation(libs.purchases.ui)  
+        }
+    }
+}
+</code></pre>
+<h2 is-upgraded>Opt in to ExperimentalForeignApi</h2>
+<p>Since the SDK leverages Kotlin-generated bindings for native iOS code, you&#39;ll need to opt in to the <code>ExperimentalForeignApi</code> in your iOS source sets. To enable this, add the following configuration to your module&#39;s <code>build.gradle.kts</code> file:</p>
+<pre><code language="language-kotlin" class="language-kotlin">kotlin {
+    // ...
+    sourceSets {
+        // ...
+        named { it.lowercase().startsWith(&#34;ios&#34;) }.configureEach {
+            languageSettings {
+                optIn(&#34;kotlinx.cinterop.ExperimentalForeignApi&#34;)
+            }
+        }
+    }
+}
+</code></pre>
+<h2 is-upgraded>Link the native iOS SDK</h2>
+<p>Since the SDK depends on a native RevenueCat iOS framework, PurchasesHybridCommon, this will need to be linked to your existing iOS project. In this codelab, you&#39;ll configure the native iOS SDK by using CocoaPods.</p>
+<p>You can include a complete Kotlin project as a CocoaPods dependency. To do this, specify the dependency in your project&#39;s <code>Podfile</code> by providing the name and the path to the directory containing the generated <code>.podspec</code> file.</p>
+<ol type="1">
+<li>Add the Kotlin CocoaPods Gradle plugin and the <code>purchases-common</code> version to your version catalog. In the <code>gradle/libs.versions.toml</code> file, add the following to the <code>[plugins]</code> block:</li>
+</ol>
+<pre><code language="language-gradle" class="language-gradle">[versions] 
+# This version must be equal to everything after the &#39;+&#39; in the purchases-kmp version.
+purchases-common = &#34;13.3.0&#34;
+
+[plugins]
+kotlin-cocoapods = { id = &#34;org.jetbrains.kotlin.native.cocoapods&#34;, version.ref = &#34;kotlin&#34; }
+</code></pre>
+<ol type="1" start="2">
+<li>In your root <code>build.gradle.kts</code> file, add the following alias to the plugins {} block:</li>
+</ol>
+<pre><code language="language-gradle" class="language-gradle">alias(libs.plugins.kotlin.cocoapods) apply false
+</code></pre>
+<ol type="1" start="3">
+<li>In the module where you want to integrate CocoaPods (e.g., composeApp), add the same alias to its <code>plugins {}</code> block:</li>
+</ol>
+<pre><code language="language-gradle" class="language-gradle">alias(libs.plugins.kotlin.cocoapods)
+</code></pre>
+<ol type="1" start="4">
+<li>Next, configure cocoapods environments like the below:</li>
+</ol>
+<pre><code language="language-kotlin" class="language-kotlin">kotlin {
+    cocoapods {
+        // Required properties
+        // Specify the required Pod version here
+        // Otherwise, the Gradle project version is used
+        version = &#34;1.0&#34;
+        summary = &#34;Some description for a Kotlin/Native module&#34;
+        homepage = &#34;Link to a Kotlin/Native module homepage&#34;
+
+        // Optional properties
+        // Configure the Pod name here instead of changing the Gradle project name
+        name = &#34;MyCocoaPod&#34;
+
+        // .. other Cocoapods options are here. 
+
+        // Add the PurchasesHybridCommon dependency.
+        pod(&#34;PurchasesHybridCommon&#34;) {  
+            version = libs.versions.purchases.common.get()  
+            extraOpts += listOf(&#34;-compiler-option&#34;, &#34;-fmodules&#34;)
+        }        
+    }
+}
+</code></pre>
+<ol type="1" start="5">
+<li>Finally, add the following <code>post_install</code> script to your iOS app target in the <code>Podfile</code>. For example, if your Kotlin Multiplatform module is named <code>shared</code>, your script should look like this:</li>
+</ol>
+<pre><code>target &#39;iosApp&#39; do
+  use_frameworks!
+  platform :ios, &#39;16.0&#39;
+  pod &#39;shared&#39;, :path =&gt; &#39;../shared&#39;, :platforms =&gt; :ios
+
+  # Add the following post_install script:
+  post_install do |installer|
+    installer.pods_project.targets.each do |target|
+      if target.name == &#39;shared&#39;
+        target.build_configurations.each do |config|
+          config.build_settings.delete(&#39;ASSETCATALOG_COMPILER_APPICON_NAME&#39;)
+        end
+      end
+    end
+  end
+end 
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Initialization" duration="0">
+        <p>Now it&#39;s time to initialize the Purchases SDK in your project. Be sure to configure Purchases using <strong>only your public API key</strong>, which you can find by navigating to your app&#39;s settings under <strong>Project Settings &gt; Platforms</strong>.</p>
+<pre><code language="language-kotlin" class="language-kotlin">import com.revenuecat.purchases.kmp.LogLevel
+import com.revenuecat.purchases.kmp.Purchases
+import com.revenuecat.purchases.kmp.configure
+
+// If you have common initialization logic, call configure() there. If not,
+// call it early in the app&#39;s lifecycle on the respective platforms.
+// Note: make sure you use the correct api key for each platform. You could
+// use Kotlin Multiplatform&#39;s expect/actual mechanism for this. 
+
+Purchases.logLevel = LogLevel.DEBUG
+Purchases.configure(apiKey = &#34;&lt;google_or_apple_api_key&gt;&#34;) {
+    appUserId = &#34;&lt;app_user_id&gt;&#34;
+    // Other configuration options.
+}
+</code></pre>
+<p>The <code>app_user_id</code> field in the <code>.configure</code> method is used by RevenueCat to identify users in your app. You can either provide a custom user identifier or omit it to let RevenueCat automatically generate an anonymous ID. For more details, refer to our <a href="https://www.revenuecat.com/docs/user-ids" target="_blank">Identifying Users guide</a>.</p>
+<p>Yes! You&#39;ve now completed 50% of the implementation.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Validating Entitlements" duration="3">
+        <p>Now let&#39;s move on to validating user entitlements.</p>
+<p>As mentioned earlier, an entitlement represents the level of access or features a user unlocks after making a purchase. This makes it useful for determining things like whether to display an ad banner or grant premium access.</p>
+<p>You can easily check if a user has an active entitlement using the code snippet below:</p>
+<pre><code language="language-kotlin" class="language-kotlin">val ENTITLEMENT_IDENTIFIER = &#34;..&#34; // get specific entitlement identifier from your RevenueCat dashboard
+val customerInfo = Purchases.sharedInstance.awaitCustomerInfo()
+val isEntitled = customerInfo?.entitlements[ENTITLEMENT_IDENTIFIER]?.isActive == true
+</code></pre>
+<p>Once you&#39;ve checked whether the user has a specific entitlement, you can decide how to proceed based on your app&#39;s business model.</p>
+<p>For example, if your app is ad-supported, you might choose to show or hide an AdMob banner. Alternatively, you could choose to display a paywall or purchase dialog, allowing users to unlock advanced features or content.</p>
+<p>Here&#39;s an example of how you might implement that logic:</p>
+<pre><code language="language-kotlin" class="language-kotlin">@Composable
+fun ContentScreen(isEntitled: Boolean) {
+    if (isEntitled) {
+      // if the user is granted access to this entitlement. don&#39;t need to display a banner.
+    } else {
+      // display a banner UI here or display a paywall
+      ..
+    }
+}
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Implement In-App Purchases" duration="4">
+        <p>Now, let&#39;s implement in-app purchases to offer an ad-free experience. To get started, you&#39;ll first need to fetch the relevant product information from your RevenueCat dashboard. This product data will be used to present purchase options to your users.</p>
+<p>You can retrieve the available products by calling <code>Purchases.sharedInstance.awaitGetProducts()</code>, as shown in the example below:</p>
+<pre><code language="language-kotlin" class="language-kotlin">// fetches the product information from the RevenueCat server
+val products = Purchases.sharedInstance.awaitGetProducts(
+  productIds = listOf(&#34;paywall_tester.subs&#34;),
+)
+
+// proceed in-app purchases
+val purchaseResult = Purchases.sharedInstance.awaitPurchase(
+  purchaseParams = PurchaseParams.Builder(
+    activity = context as Activity,
+    storeProduct = products.first(),
+  ).build()
+)
+</code></pre>
+<p>If you offer multiple product variations, such as <code>paywall_tester.subs:weekly</code>, <code>paywall_tester.subs:monthly</code>, and <code>paywall_tester.subs:yearly</code>, you can simplify product retrieval by using the <strong>base product identifier</strong>, <code>paywall_tester.subs</code>, as the value for the <code>productIds</code> field. This tells RevenueCat to fetch <strong>all related product variations</strong> as a list, so you can dynamically present them in your paywall UI.</p>
+<p>Once you&#39;ve retrieved the product data, you can initiate the <strong>in-app purchase flow</strong> by calling <code>Purchases.sharedInstance.awaitPurchase(product)</code>. This will automatically trigger the <strong>Google Play purchase dialog</strong>, enabling the user to complete the transaction within your app.</p>
+<p>Just like that, you&#39;ve integrated a fully functional <strong>in-app purchase flow</strong> with just a few lines of code—no need to deal with the complexity of handling receipts, store APIs, or purchase validation manually.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Implement Paywalls" duration="7">
+        <p>Now, it&#39;s time to impement Paywalls in your KMP project using Jetpack Compose.</p>
+<h2 is-upgraded>Business Logic</h2>
+<p>To begin, you&#39;ll need to <strong>fetch the current offering</strong> from the RevenueCat dashboard. An offering defines the available purchase options presented to the user, such as monthly, yearly, or lifetime plans. This can be done effortlessly using the <code>Purchases.sharedInstance.awaitOfferings()</code> method, as demonstrated in the example below.</p>
+<pre><code language="language-kotlin" class="language-kotlin">internal class DetailsRepositoryImpl : DetailsRepository {
+
+  override fun fetchOffering(): Flow&lt;ApiResponse&lt;Offering&gt;&gt; = flow {
+    try {
+      val offerings = Purchases.sharedInstance.awaitOfferings()
+      offerings.current?.let { currentOffering -&gt;
+        val response = ApiResponse.of { currentOffering }
+        emit(response)
+      }
+    } catch (e: PurchasesException) {
+      ApiResponse.exception(e)
+    }
+  }
+}
+</code></pre>
+<p>The RevenueCat KMP SDK has <strong>native support for Kotlin coroutines</strong>, making it a seamless fit for projects using a coroutine-based architecture. The current offering is also exposed as a <strong>Flow</strong>, allowing you to observe changes reactively and update your UI accordingly.</p>
+<h2 is-upgraded>Paywalls UI With Jetpack Compose</h2>
+<p>At this point, everything should be ready to go. If you&#39;ve already added the <code>com.revenuecat.purchases:purchases-kmp-ui</code> SDK, you can <strong>easily build paywall UIs using Jetpack Compose</strong>.</p>
+<p>RevenueCat&#39;s UI library provides built-in components, such as <code>PaywallDialog</code> that allow you to <strong>quickly display a paywall screen or dialog</strong>. These components are fully customizable, offering a variety of configuration options to tailor the look and behavior to match your app&#39;s design.</p>
+<p>Here&#39;s an example showing how simple it is to implement and customize a paywall using Jetpack Compose:</p>
+<pre><code language="language-kotlin" class="language-kotlin">val currentOffering by viewModel.offering.collectAsState()
+
+val options = remember {
+    PaywallOptions(dismissRequest = { TODO(&#34;Handle dismiss&#34;) }) {
+        offering = currentOffering
+        shouldDisplayDismissButton = true
+    }
+}
+
+Paywall(options)
+</code></pre>
+<p>Configuration! 🥳 Now, you&#39;ll be able to display paywalls whenever a user doesn&#39;t have the required entitlement, using the exact same design you configured in the Paywall Editor.</p>
+<p>As you&#39;ve already seen in the <a href="https://revenuecat.github.io/codelab-internal-testing/google-play/codelab-1-google-play-integration/index.html#7" target="_blank">Codelab: RevenueCat Google Play Integration (Create Paywalls)</a>, the paywall system is built on a <strong>server-driven UI</strong>. This means you can dynamically update the paywall&#39;s content and design directly from the dashboard without needing to push app updates or go through the review process.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="0">
+        <p>In this codelab, you&#39;ve learned how to integrate RevenueCat&#39;s KMP SDK, implement in-app purchases, and build paywalls in Jetpack Compose. Now it&#39;s time to ship your app and make more money! 💰</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
