@@ -172,7 +172,6 @@ PaywallDialog(
        .setDismissRequest {  }
        .setOffering(offering)
        .setFontProvider(..)
-       .setCustomPurchaseLogic(..)
        .setListener(object : PaywallListener {
            override fun onPurchaseStarted(rcPackage: Package) {
                super.onPurchaseStarted(rcPackage)
