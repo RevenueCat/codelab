@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2025-08-28T10:53:06+09:00",
+  "updated": "2025-08-28T11:05:41+09:00",
   "id": "codelab-4-flutter-sdk",
   "duration": 21,
   "title": "Flutter In-App Purchases \u0026 Paywalls",
@@ -21,5 +21,6 @@
     "web"
   ],
   "feedback": "https://github.com/revenuecat/codelab/issues/new",
+  "ga": "G-0MLNVKXFGB",
   "url": "codelab-4-flutter-sdk"
 }
