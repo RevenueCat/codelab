@@ -29,7 +29,7 @@ In this codelab, you will:
 - Learn how to distinguish between paying and non-paying users
 - Build a paywall screen, which is based on the server-driven UI approach
 
-# [Flutter Purchases & Paywalls Overview](https://revenuecat.github.io/codelab/flutter/codelab-4-flutter-sdk/index.html#0)
+## [Flutter Purchases & Paywalls Overview](https://revenuecat.github.io/codelab/flutter/codelab-4-flutter-sdk/index.html#0)
 
 In this codelab, you will:
 - Integrate the RevenueCat SDK into your Flutter project
