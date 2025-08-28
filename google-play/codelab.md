@@ -5,6 +5,7 @@ categories: codelab,markdown
 environments: Web
 status: Published
 feedback link: https://github.com/revenuecat/codelab/issues/new
+analytics account: G-0MLNVKXFGB
 
 # RevenueCat Google Play Integration
 

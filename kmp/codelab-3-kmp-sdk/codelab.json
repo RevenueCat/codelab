@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2025-07-08T14:15:21+09:00",
+  "updated": "2025-08-28T11:05:28+09:00",
   "id": "codelab-3-kmp-sdk",
   "duration": 25,
   "title": "KMP In-App Purchases \u0026 Paywalls",
@@ -21,5 +21,6 @@
     "web"
   ],
   "feedback": "https://github.com/revenuecat/codelab/issues/new",
+  "ga": "G-0MLNVKXFGB",
   "url": "codelab-3-kmp-sdk"
 }
