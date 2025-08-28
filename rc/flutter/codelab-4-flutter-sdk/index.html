@@ -1,0 +1,416 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Flutter In-App Purchases &amp; Paywalls</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  codelab-ga4id=""
+                  id="codelab-4-flutter-sdk"
+                  title="Flutter In-App Purchases &amp; Paywalls"
+                  environment="web"
+                  feedback-link="https://github.com/revenuecat/codelab/issues/new">
+    
+      <google-codelab-step label="Flutter In-App Purchases &amp; Paywalls Overview" duration="2">
+        <p>Welcome to <a href="https://www.revenuecat.com/" target="_blank">RevenueCat</a>&#39;s Flutter SDK Codelab!</p>
+<p><strong>Goal:</strong> In this codelab, you will learn how to integrate the RevenueCat Flutter SDK into a new Flutter application to fetch product offerings and display a pre-built, native paywall UI.</p>
+<p><strong>What you&#39;ll build:</strong></p>
+<p>A simple one-screen app that shows a loading indicator, fetches your configured &#34;Offering&#34; from RevenueCat, and then displays the <code>PaywallView</code>.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<p>Before you start, you must have the following set up:</p>
+<ol type="1">
+<li><strong>Flutter SDK:</strong> Your Flutter development environment should be ready.</li>
+<li><strong>RevenueCat Account:</strong> A free account at <a href="https://revenuecat.com" target="_blank">revenuecat.com</a>.</li>
+<li><strong>App Store / Play Store Configuration:</strong><ul>
+<li>An in-app product (subscription or one-time purchase) created in either App Store Connect or Google Play Console. If you want to learn more about configuring Google Play, check out <a href="https://revenuecat.github.io/codelab/google-play/codelab-1-google-play-integration/index.html#0" target="_blank">Codelab1: RevenueCat Google Play Integration</a>.</li>
+<li>This product linked to an <strong>Entitlement</strong> and an <strong>Offering</strong> within your RevenueCat dashboard. This is the most critical step. If you have no &#34;Current&#34; offering, the paywall will not show.</li>
+</ul>
+</li>
+<li><strong>A Physical Device or Configured Emulator:</strong> For testing in-app purchases.</li>
+</ol>
+<p>By the end of this codelab, you&#39;ll be able to successfully implement in-app purchases in your Flutter app and display dynamic paywalls using RevenueCat&#39;s Flutter SDK.</p>
+<p class="image-container"><img alt="overview" src="img/686cb99007ad736e.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Import RevenueCat SDK" duration="5">
+        <p>First things first, before implementing in-app purchases, you&#39;ll need to import the RevenueCat SDK into your existing or new project. To get started, add the following dependency to your <code>pubspec.yaml</code> file:</p>
+<p>You can check out the <a href="https://github.com/RevenueCat/purchases-flutter/releases" target="_blank">latest release version on GitHub</a>.</p>
+<pre><code language="language-gradle" class="language-gradle">dependencies:
+  purchases_flutter: 9.2.3
+  purchases_ui_flutter: 9.2.3
+</code></pre>
+<p>Once you&#39;ve added those dependencies like the image below, you should click the &#34;Pub get&#34; button, and it will automatically download required dependencies.</p>
+<p class="image-container"><img alt="dependencies" src="img/a6a5a178d25ca1dc.png"></p>
+<p>Now, let&#39;s initialize the RevenueCat SDK. We will do this in the <code>main.dart</code> file.</p>
+<ol type="1">
+<li>Open <code>lib/main.dart</code> and replace its entire content with the following code.</li>
+<li><strong>Paste your API keys</strong> into the <code>_androidApiKey</code> and <code>_iosApiKey</code> constants.</li>
+</ol>
+<pre><code language="language-dart" class="language-dart">// lib/main.dart
+
+import &#39;package:flutter/material.dart&#39;;
+import &#39;package:purchases_flutter/purchases_flutter.dart&#39;;
+import &#39;dart:io&#39; show Platform;
+
+// --- PASTE YOUR REVENUECAT KEYS HERE ---
+const String _androidApiKey = &#34;goog_YOUR_KEY_HERE&#34;;
+const String _iosApiKey = &#34;appl_YOUR_KEY_HERE&#34;;
+
+void main() async {
+  // Ensure Flutter widgets are initialized before any async plugin calls
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize RevenueCat SDK before running the app
+  await _initializeRevenueCat();
+
+  runApp(const MyApp());
+}
+
+Future&lt;void&gt; _initializeRevenueCat() async {
+  // Enable debug logs for development
+  await Purchases.setLogLevel(LogLevel.debug);
+
+  PurchasesConfiguration? configuration;
+  if (Platform.isAndroid) {
+    configuration = PurchasesConfiguration(_androidApiKey);
+  } else if (Platform.isIOS) {
+    configuration = PurchasesConfiguration(_iosApiKey);
+  } else {
+    print(&#34;RevenueCat not configured for this platform.&#34;);
+    return;
+  }
+
+  try {
+    await Purchases.configure(configuration);
+    print(&#34;RevenueCat configured successfully!&#34;);
+  } catch (e) {
+    print(&#34;Error configuring RevenueCat: $e&#34;);
+  }
+}
+
+// ... Rest of the code will go here in the next steps ...
+</code></pre>
+<p>We just created an <code>async main</code> function. This allows us to <code>await</code> the <code>_initializeRevenueCat</code> function, guaranteeing that the RevenueCat SDK is configured and ready before any UI is built. This is the correct way to initialize plugins that need to be available right from the start.</p>
+<p>Yes! You&#39;ve now completed 50% of the implementation.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Validating Entitlements" duration="3">
+        <p>Now let&#39;s move on to validating user entitlements.</p>
+<p>As mentioned earlier, an entitlement represents the level of access or features a user unlocks after making a purchase. This makes it useful for determining things like whether to display an ad banner or grant premium access.</p>
+<p>You can easily check if a user has an active entitlement using the code snippet below:</p>
+<pre><code language="language-dart" class="language-dart">val ENTITLEMENT_IDENTIFIER = &#34;..&#34; // get specific entitlement identifier from your RevenueCat dashboard
+final customerInfo = await Purchases.getCustomerInfo();
+final isEntitled = customerInfo.entitlements.active[&#34;ENTITLEMENT_IDENTIFIER&#34;]?.isActive;
+</code></pre>
+<p>Once you&#39;ve checked whether the user has a specific entitlement, you can decide how to proceed based on your app&#39;s business model.</p>
+<p>For example, if your app is ad-supported, you might choose to show or hide an AdMob banner. Alternatively, you could choose to display a paywall or purchase dialog, allowing users to unlock advanced features or content.</p>
+<p>Here&#39;s an example of how you might implement that logic:</p>
+<pre><code language="language-dart" class="language-dart">if (isEntitled) {
+// if the user is granted access to this entitlement. don&#39;t need to display a banner.
+} else {
+// display a banner UI here or display a paywall
+..
+}
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Implement In-App Purchases" duration="4">
+        <p>Now, let&#39;s implement in-app purchases to offer an ad-free experience. To get started, you&#39;ll first need to fetch the relevant product information from your RevenueCat dashboard. This product data will be used to present purchase options to your users.</p>
+<p>You can retrieve the available products by calling <code>Purchases.sharedInstance.awaitGetProducts()</code>, as shown in the example below:</p>
+<pre><code language="language-dart" class="language-dart">// fetches the product information from the Revenue-Cat server
+final List&lt;StoreProduct&gt; products = await Purchases.getProducts([&#39;paywall_tester.subs&#39;]);
+
+// proceed in-app purchases
+final purchaseResult = await Purchases.purchaseStoreProduct(products.first);
+</code></pre>
+<p>If you offer multiple product variations, such as <code>paywall_tester.subs:weekly</code>, <code>paywall_tester.subs:monthly</code>, and <code>paywall_tester.subs:yearly</code>, you can simplify product retrieval by using the <strong>base product identifier</strong>, <code>paywall_tester.subs</code>, as the value for the <code>productIds</code> field. This tells RevenueCat to fetch <strong>all related product variations</strong> as a list, so you can dynamically present them in your paywall UI.</p>
+<p>Once you&#39;ve retrieved the product data, you can initiate the <strong>in-app purchase flow</strong> by calling <code>Purchases.sharedInstance.awaitPurchase(product)</code>. This will automatically trigger the <strong>Google Play purchase dialog</strong>, enabling the user to complete the transaction within your app.</p>
+<p>Just like that, you&#39;ve integrated a fully functional <strong>in-app purchase flow</strong> with just a few lines of code—no need to deal with the complexity of handling receipts, store APIs, or purchase validation manually.</p>
+<p>So the full example of code will look like below:</p>
+<pre><code language="language-dart" class="language-dart">import &#39;package:flutter/services.dart&#39;;
+import &#39;package:purchases_flutter/purchases_flutter.dart&#39;;
+
+/// Fetches a specific product by its ID and initiates the purchase flow.
+///
+/// This function handles potential errors like the product not being found,
+/// the user canceling the purchase, or other store errors.
+Future&lt;void&gt; purchaseProduct() async {
+  // 1. Define the product identifier you want to fetch.
+  const String productId = &#39;paywall_tester.subs&#39;;
+
+  try {
+    // 2. Fetch the StoreProduct(s) from RevenueCat
+    print(&#39;Fetching products...&#39;);
+    final List&lt;StoreProduct&gt; products = await Purchases.getProducts([productId]);
+
+    // 3. Check if the product list is not empty
+    if (products.isEmpty) {
+      print(&#39;Error: Product not found. Check the ID and your RevenueCat setup.&#39;);
+      // Optionally, show an error message to the user
+      return;
+    }
+
+    final StoreProduct productToPurchase = products.first;
+    print(&#39;Product found: ${productToPurchase.title}. Initiating purchase...&#39;);
+
+    // 4. Initiate the purchase flow
+    final CustomerInfo customerInfo = await Purchases.purchaseStoreProduct(productToPurchase);
+
+    // 5. Check if the purchase was successful by verifying the entitlement
+    // Replace &#34;your_premium_entitlement&#34; with your actual entitlement identifier from RevenueCat
+    if (customerInfo.entitlements.all[&#34;your_premium_entitlement&#34;]?.isActive ?? false) {
+      print(&#39;Purchase successful! User now has premium access.&#39;);
+      // Grant access to premium content
+    } else {
+      print(&#39;Purchase completed, but entitlement is not active.&#39;);
+    }
+  } on PlatformException catch (e) {
+    // 6. Handle potential errors
+    final PurchasesError error = PurchasesErrorHelper.getErrorCode(e);
+    if (error == PurchasesErrorCode.purchaseCancelledError) {
+      print(&#39;Purchase cancelled by user.&#39;);
+    } else {
+      print(&#39;Purchase failed with error: ${e.message}&#39;);
+    }
+  } catch (e) {
+    print(&#39;An unexpected error occurred: $e&#39;);
+  }
+}
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Implement Paywalls" duration="7">
+        <p>Now, it&#39;s time to impement Paywalls in dart.</p>
+<h2 is-upgraded>Step 1: Create the App Shell</h2>
+<p>Now, let&#39;s add the basic Flutter app structure. This includes the <code>MyApp</code> widget and a stateful <code>MyHomePage</code> widget that will eventually hold our paywall.</p>
+<p>Append the following code to your <code>lib/main.dart</code> file:</p>
+<pre><code language="language-dart" class="language-dart">// lib/main.dart (continued)
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: &#39;RevenueCat Paywall Demo&#39;,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      home: const MyHomePage(title: &#39;RevenueCat Paywall Demo&#39;),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key, required this.title});
+  final String title;
+
+  @override
+  State&lt;MyHomePage&gt; createState() =&gt; _MyHomePageState();
+}
+
+// ... The State class will be built in the next step ...
+</code></pre>
+<h2 is-upgraded>Step 2: Fetch Offerings and Handle State</h2>
+<p>This is the core logic. In the <code>_MyHomePageState</code>, we will fetch the offerings from RevenueCat and manage the loading and error states.</p>
+<p>Replace the comment <code>// ... The State class will be built...</code> with the full <code>_MyHomePageState</code> class below:</p>
+<pre><code language="language-dart" class="language-dart">// lib/main.dart (continued)
+
+class _MyHomePageState extends State&lt;MyHomePage&gt; {
+  // State variables
+  Offering? _offering;
+  bool _isLoading = true;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch offerings as soon as the page loads
+    _loadOfferings();
+  }
+
+  Future&lt;void&gt; _loadOfferings() async {
+    // We must ensure the widget is still mounted before calling setState
+    if (!mounted) return;
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null; // Clear previous errors
+    });
+
+    try {
+      // Get the current offerings from RevenueCat
+      final offerings = await Purchases.getOfferings();
+
+      // Ensure widget is still mounted after async call
+      if (!mounted) return;
+
+      setState(() {
+        _offering = offerings.current;
+        _isLoading = false;
+        if (_offering == null) {
+          _errorMessage = &#34;No current offering found. Check your RevenueCat dashboard.&#34;;
+        }
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _errorMessage = &#34;Failed to load offerings: ${e.toString()}&#34;;
+      });
+    }
+  }
+
+  // The build method will go here in the final step...
+  @override
+  Widget build(BuildContext context) {
+    // Placeholder for now
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.title)),
+      body: const Center(child: Text(&#34;Almost there!&#34;)),
+    );
+  }
+}
+</code></pre>
+<p><strong>What did we just do?</strong></p>
+<ol type="1">
+<li>We created three state variables: <code>_isLoading</code> to show a spinner, <code>_errorMessage</code> to display errors, and <code>_offering</code> to hold the data for the paywall.</li>
+<li>In <code>initState</code>, we called <code>_loadOfferings()</code> to start the data fetching process immediately.</li>
+<li>The <code>_loadOfferings</code> method wraps the <code>Purchases.getOfferings()</code> call in a <code>try...catch</code> block. It updates the state to show/hide the loader and store either the fetched offering or an error message.</li>
+</ol>
+<h2 is-upgraded>Step 3: Display the PaywallView</h2>
+<p>Finally, let&#39;s update the <code>build</code> method to conditionally display the correct UI based on our state variables. When the offering is loaded successfully, we will show the <code>PaywallView</code>.</p>
+<p>Replace the <code>build</code> method in <code>_MyHomePageState</code> with this complete version:</p>
+<pre><code language="language-dart" class="language-dart">// lib/main.dart (in _MyHomePageState)
+
+@override
+Widget build(BuildContext context) {
+  Widget content;
+
+  // Show a loader while fetching offerings
+  if (_isLoading) {
+    content = const Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        CircularProgressIndicator(),
+        SizedBox(height: 20),
+        Text(&#34;Loading Paywall...&#34;),
+      ],
+    );
+  } 
+  // Show an error message if something went wrong
+  else if (_errorMessage != null) {
+    content = Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Text(
+        _errorMessage!,
+        textAlign: TextAlign.center,
+        style: const TextStyle(color: Colors.red, fontSize: 16),
+      ),
+    );
+  } 
+  // Show the PaywallView once the offering is loaded
+  else if (_offering != null) {
+    content = PaywallView(
+      offering: _offering!,
+      onDismiss: () =&gt; Navigator.pop(context),
+      onPurchaseCompleted: (customerInfo) {
+        print(&#34;Purchase completed for entitlement: ${customerInfo.entitlements.active.keys.first}&#34;);
+        // You can dismiss or navigate away here
+      },
+      onPurchaseError: (error) {
+        print(&#34;Purchase error: ${error.message}&#34;);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(&#34;Purchase failed: ${error.message}&#34;)),
+        );
+      },
+      onRestoreCompleted: (customerInfo) {
+        print(&#34;Restore completed. Active entitlements: ${customerInfo.entitlements.active.length}&#34;);
+        if (customerInfo.entitlements.active.isNotEmpty) {
+           Navigator.pop(context);
+        }
+      },
+    );
+  }
+  // Fallback for an unlikely case
+  else {
+    content = const Text(&#34;No offering available.&#34;);
+  }
+
+  return Scaffold(
+    appBar: AppBar(
+      backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      title: Text(widget.title),
+    ),
+    body: Center(
+      child: content,
+    ),
+  );
+}
+</code></pre>
+<p>You&#39;re Done!</p>
+<p>Now, run your application on a device or emulator.</p>
+<pre><code language="language-sh" class="language-sh">flutter run
+</code></pre>
+<p>You should see:</p>
+<ol type="1">
+<li>A &#34;Loading Paywall...&#34; message with a spinner.</li>
+<li>Followed by your fully functional, native paywall UI like the image below.</li>
+</ol>
+<p class="image-container"><img alt="result" src="img/e9ae71777f343c1.png"></p>
+<h2 is-upgraded>Troubleshooting</h2>
+<p>If the paywall doesn&#39;t appear, check the debug console and review these common issues:</p>
+<ul>
+<li><strong>&#34;No current offering found&#34;</strong>: This is the most common error. It means your RevenueCat dashboard is missing a &#34;current&#34; offering. Go to <strong>Offerings</strong>, select an offering, and make sure it&#39;s marked as &#34;current&#34;.</li>
+<li><strong>Incorrect API Keys</strong>: Double-check that you&#39;ve copied the correct public API key for the platform you&#39;re testing.</li>
+<li><strong>Products Not Configured</strong>: Ensure your in-app products in the store consoles are correctly set up and linked to an entitlement and offering in RevenueCat.</li>
+<li><strong>Sandbox/Test User Issues</strong>: Make sure you are logged in with a sandbox tester account (iOS) or your email is added as a license tester (Android).</li>
+</ul>
+<p>Configuration! 🥳 Now, you&#39;ll be able to display paywalls whenever a user doesn&#39;t have the required entitlement, using the exact same design you configured in the Paywall Editor.</p>
+<p>As you&#39;ve already seen in the <a href="https://revenuecat.github.io/codelab-internal-testing/google-play/codelab-1-google-play-integration/index.html#7" target="_blank">Codelab: RevenueCat Google Play Integration (Create Paywalls)</a>, the paywall system is built on a <strong>server-driven UI</strong>. This means you can dynamically update the paywall&#39;s content and design directly from the dashboard without needing to push app updates or go through the review process.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="0">
+        <p>In this codelab, you&#39;ve learned how to integrate RevenueCat&#39;s Flutter SDK, implement in-app purchases, and build paywalls in Flutter. Now it&#39;s time to ship your app and make more money! 💰</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
