@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2025-08-28T11:05:19+09:00",
+  "updated": "2025-08-29T09:50:56+09:00",
   "id": "codelab-2-android-sdk",
   "duration": 21,
   "title": "Android In-App Purchases \u0026 Paywalls",
@@ -21,6 +21,6 @@
     "web"
   ],
   "feedback": "https://github.com/revenuecat/codelab/issues/new",
-  "ga": "G-0MLNVKXFGB",
+  "ga4": "G-0MLNVKXFGB",
   "url": "codelab-2-android-sdk"
 }

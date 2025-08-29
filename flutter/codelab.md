@@ -5,7 +5,7 @@ categories: codelab,markdown
 environments: Web
 status: Published
 feedback link: https://github.com/revenuecat/codelab/issues/new
-analytics account: G-0MLNVKXFGB
+analytics_ga4_account: G-0MLNVKXFGBq
 
 # Flutter In-App Purchases & Paywalls
 
