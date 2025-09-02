@@ -1,0 +1,245 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>RevenueCat App Store Integration</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  codelab-ga4id="G-0MLNVKXFGB"
+                  id="app-store"
+                  title="RevenueCat App Store Integration"
+                  environment="web"
+                  feedback-link="https://github.com/revenuecat/codelab/issues/new">
+    
+      <google-codelab-step label="RevenueCat App Store Integration Overview" duration="3">
+        <p>Welcome to <a href="https://www.revenuecat.com/" target="_blank">RevenueCat</a>&#39;s App Store Integration Codelab!</p>
+<p>In this codelab, you&#39;ll learn how to:</p>
+<ul>
+<li>Properly configure products on App Store Connect.</li>
+<li>Set up the RevenueCat dashboard and connect it to your App Store products.</li>
+<li>Understanding Product, Offering, Package, and Entitlement.</li>
+<li>Create paywalls using the <a href="https://www.revenuecat.com/docs/tools/paywalls/creating-paywalls#using-the-editor" target="_blank">Paywall Editor</a>.</li>
+</ul>
+<p>By the end of this codelab, you&#39;ll be able to set up everything about App Store Connect and the RevenueCat dashboard before implementing in-app purchases and paywalls seamlessly in your iOS app, with all the necessary setup completed.</p>
+<h2 is-upgraded>Why RevenueCat?</h2>
+<p>The world&#39;s leading apps rely on RevenueCat to power in-app purchases, subscriptions, and paywalls, manage customer data, and grow revenue across iOS, Android, and the web. Handling over $8B in annual in-app purchases, RevenueCat is trusted by top companies like OpenAI (ChatGPT), Notion, Buffer, and Goodnotes.</p>
+<h3 is-upgraded>Why do so many developers choose RevenueCat?</h3>
+<p>RevenueCat simplifies cross-platform in-app purchases while providing a unified source of truth for analytics. It helps you better understand lifetime value (LTV), revenue trends, and user behavior—enabling smarter monetization and faster growth. Key benefits include:</p>
+<ul>
+<li><strong>Unified User Identity</strong>: Reliably link purchases to your own user IDs, solving the disconnect between app-level and store-level accounts.</li>
+<li><strong>Streamlined Subscription Management</strong>: Abstracts platform-specific limitations, offering consistent subscription behavior even when direct control is limited (e.g., on iOS).</li>
+<li><strong>Cross-Platform Analytics</strong>: Get standardized, real-time insights that are clearer and more actionable than the delayed data from Apple and Google consoles.</li>
+<li><strong>Accurate Pricing Insights</strong>: Understand exactly what users paid, across all locales and stores, even when native frameworks fall short.</li>
+</ul>
+<p>With RevenueCat, monetizing your app becomes simpler, smarter, and more scalable.</p>
+<p class="image-container"><img alt="used_by" src="img/ebbd5fec54046ec4.png"></p>
+<p class="image-container"><img alt="logo" src="img/364c66c86f950678.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Set up App Store Connect Products" duration="8">
+        <p>First, log in to <a href="https://appstoreconnect.apple.com/" target="_blank">App Store Connect</a>, which is Apple&#39;s central hub for managing your apps. This guide assumes you have an app already set up and are ready to add in-app purchases.</p>
+<h2 is-upgraded>📘 Important: Complete Your Agreements First!</h2>
+<p>Before you can create or test any in-app purchases, you must have your business agreements in order.</p>
+<ol type="1">
+<li><strong>Sign the Paid Applications Agreement</strong>: Navigate to the <strong>Agreements, Tax, and Banking</strong> section. Ensure the ‘Paid Applications&#39; agreement shows an ‘Active&#39; status. You will not be able to test purchases until the latest version is signed.</li>
+<li><strong>Complete Tax and Banking Info</strong>: In the same section, go through the &#34;Tax&#34; and &#34;Banking&#34; tabs. You must link a bank account and have its status be &#34;Clear&#34; before you can proceed.</li>
+</ol>
+<p>Signing all agreements is required to continue.</p>
+<h2 is-upgraded>Create an In-App Purchase</h2>
+<p>In App Store Connect, navigate to <strong>My Apps</strong> and select your application. In the sidebar, select <strong>Subscriptions</strong> under the &#34;Features&#34; section.</p>
+<p class="image-container"><img alt="my_apps" src="img/d5769e1efad740ab.png"></p>
+<p class="image-container"><img alt="my_apps" src="img/5b4431405f1e68a7.png"></p>
+<p>If you&#39;re creating a one-time purchase (like a non-consumable), select <strong>In-App Purchases</strong> instead. The steps are very similar.</p>
+<h2 is-upgraded>1. Create a Subscription Group</h2>
+<p>Subscription Groups organize your products so users can easily switch between them (e.g., upgrading from a monthly to an annual plan). If you don&#39;t have one yet, you&#39;ll be prompted to create one.</p>
+<p>Click the <strong>&#39;+&#39;</strong> symbol to create a Subscription Group. You&#39;ll need to provide a <strong>Reference Name</strong>. This is not shown to users, so use something descriptive for your own reference (e.g., &#34;Pro Tier Subscriptions&#34;).</p>
+<p class="image-container"><img alt="group_reference" src="img/51c843ece0d7f790.png"></p>
+<h2 is-upgraded>2. Add a New Subscription Product</h2>
+<p>After creating your Subscription Group, click the <strong>&#39;+&#39;</strong> symbol next to its name to add a new subscription product.</p>
+<p>You&#39;ll be asked to provide a <strong>Reference Name</strong> and a <strong>Product ID</strong>.</p>
+<p class="image-container"><img alt="new_product" src="img/5f0da26c3dc16472.png"></p>
+<ul>
+<li><strong>Reference Name:</strong> This is for your internal use in App Store Connect and reports. It won&#39;t be displayed to users. Use a human-readable name like &#34;Pro Plan - Annual&#34;.</li>
+<li><strong>Product ID:</strong> This is a crucial, unique identifier for your product. It can never be used again, even if you delete the product. We highly recommend a consistent naming scheme.</li>
+</ul>
+<p><strong>📘 Pro Tip: Product ID Naming Convention</strong> A good format is &#34;_&#34;. For example, a $39.99/year subscription with a 1-week free trial could be: <code>rc_3999_1y_1wfree</code>. This makes it easy to identify products at a glance.</p>
+<h2 is-upgraded>3. Set Subscription Duration and Price</h2>
+<p>Once the product is created, set the subscription <strong>Duration</strong> from the dropdown menu (e.g., ‘1 Year&#39;).</p>
+<p>Next, in the <strong>Subscription Prices</strong> section, click the <strong>&#39;+&#39;</strong> icon to add a price. Choose your primary currency and price, and Apple will automatically calculate prices for all other regions.</p>
+<p class="image-container"><img alt="subscription_price" src="img/b5427a9c8bf0e903.png"></p>
+<p>At the last step, remember to <strong>Save</strong> your changes.</p>
+<h2 is-upgraded>4. Add Introductory Offers (Optional)</h2>
+<p>To add a free trial or introductory price, click the <strong>Introductory Offers</strong> tab. Click the <strong>&#39;+&#39;</strong> icon to configure it. You can set the countries, duration, and type of offer (e.g., Free, Pay as you go). For a simple free trial, select <strong>Free</strong> and choose the duration.</p>
+<p class="image-container"><img alt="free_trials" src="img/75535646786c0acb.png"></p>
+<p>At the last step, remember to <strong>Save</strong> your changes.</p>
+<h2 is-upgraded>5. Add Localization and Reviewer Information</h2>
+<p>Finally, you need to provide the customer-facing details and information for Apple&#39;s review team.</p>
+<ul>
+<li><strong>Localization:</strong> Under <strong>App Store Information</strong>, add a localization. Provide a <strong>Subscription Display Name</strong> and <strong>Description</strong>. This is what users will see.</li>
+<li><strong>Reviewer Information:</strong> You must upload a <strong>Screenshot</strong> of your paywall (a placeholder is fine during development) and can add optional <strong>Review Notes</strong>. Your app cannot be submitted for review without this screenshot.</li>
+</ul>
+<p><strong>📘 Pro Tip:</strong> For all products that unlock the same level of access (e.g., monthly and annual &#34;Pro&#34; plans), use the exact same <strong>Subscription Display Name</strong>. This creates a cleaner and less confusing experience for users in the App Store.</p>
+<p>Once you&#39;ve finished setting up your products on App Store Connect, you&#39;re all set!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Connect App Store to RevenueCat" duration="5">
+        <p>Next, set up your <a href="https://app.revenuecat.com/signup?utm_medium=organic&utm_source=codelab&utm_campaign=advocate" target="_blank">RevenueCat account</a>. All you need is an email address.</p>
+<p>Connecting the App Store to RevenueCat is simpler than Google Play and relies on an <strong>App-Specific Shared Secret</strong>. This secret allows RevenueCat to securely validate receipts with Apple&#39;s servers.</p>
+<h2 is-upgraded>1. Generate an App-Specific Shared Secret (StoreKit 1 Only)</h2>
+<p>📘 <em>Note</em>: The app-specific shared secret is used with StoreKit 1 but is now deprecated by Apple. New apps are recommended to use StoreKit 2 and configure the in-app purchase key instead. This field is required to validate transactions if your app is targeting iOS 15 or below, or is configured to use StoreKit 1.</p>
+<ol type="1">
+<li>In <strong>App Store Connect</strong>, navigate to <strong>My Apps</strong> and select your app.</li>
+<li>In the sidebar, go to <strong>App Information</strong> under the &#34;General&#34; section.</li>
+<li>Scroll down to find the <strong>App-Specific Shared Secret</strong> and click <strong>Manage</strong>.</li>
+<li>Click <strong>Generate</strong> to create a new secret. Copy it to your clipboard.</li>
+</ol>
+<p class="image-container"><img alt="app-specific" src="img/7643cddcc35836c9.png"><img alt="app-specific" src="img/449d241ed6b985b8.png"></p>
+<h2 is-upgraded>2. Create App Configs and Add the Secrets to RevenueCat</h2>
+<ol type="1">
+<li>In your <a href="https://app.revenuecat.com/" target="_blank">RevenueCat dashboard</a>, go to your <strong>Apps &amp; providers</strong> and select your iOS configuration under the &#34;App configuration&#34; section. If you haven&#39;t created anything about app configs for App Store, you should click the <strong>+ Add app config</strong> on the right corder, and put your iOS app configurations.</li>
+<li>Paste the <strong>App-Specific Shared Secret</strong> you just generated into the corresponding field. (StoreKit 1 Only)</li>
+<li>Click <strong>Save Changes</strong>.</li>
+</ol>
+<p class="image-container"><img alt="app-specific" src="img/1c093dcc79815c65.png"></p>
+<p>That&#39;s it! RevenueCat can now communicate with the App Store for your app.</p>
+<p>Phew, Congrats! You made it through the tricky part 🎉</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Product, Offering, Package, and Entitlement" duration="6">
+        <p>At this point, most of the complex setup is behind you. Now it&#39;s time to get familiar with four essential concepts in RevenueCat that you&#39;ll need to understand before configuring your monetization strategy: <strong>Product</strong>, <strong>Offering</strong>, <strong>Package</strong>, and <strong>Entitlement</strong>.</p>
+<p>Each of these plays a unique role in how you define, present, and manage your in-app purchases across platforms.</p>
+<h2 is-upgraded>🧩 Product</h2>
+<p>A Product is an individual in-app purchase item created and managed directly in the store platforms such as the Google Play, Apple App Store, or on the web. This is the base unit of monetization—think monthly subscriptions, lifetime access, or one-time purchases. Each product has its own unique identifier, price, and duration settings defined by the store.</p>
+<p>Example: A monthly subscription product like <code>rc_1499_1m</code> configured in App Store Connect.</p>
+<h2 is-upgraded>🎯 Offering</h2>
+<p>An Offering is a collection of products grouped together to be presented as a paywall experience in your app. Offerings are configured in the RevenueCat dashboard and give you flexibility in managing A/B testing, price experiments, and regional or user-segmented paywalls, all without requiring app updates.</p>
+<p>Example: An offering named <code>default</code> might contain several packages like a monthly, annual, and lifetime option shown to users.</p>
+<h2 is-upgraded>📦 Package</h2>
+<p>A Package acts as a wrapper for equivalent products across different platforms (e.g., iOS, Android, Web). It allows you to present one pricing option (like a monthly subscription) consistently across platforms, while linking it to each store&#39;s specific product ID.</p>
+<p>Each package has a unique identifier (e.g., <code>monthly</code>, <code>annual</code>) within an offering, and helps RevenueCat resolve the correct product based on the user&#39;s platform.</p>
+<p>Example: A <code>monthly</code> package might map to <code>com.app.pro_monthly_ios</code> on iOS and <code>com.app.pro_monthly_android</code> on Android.</p>
+<h2 is-upgraded>🏷️ Entitlement</h2>
+<p>An Entitlement defines what the user gains access to after a successful purchase. It represents the features or content unlocked, and abstracts away the underlying product or package identifiers. Entitlements allow you to manage user access logic (e.g., &#34;has premium access&#34;) without hardcoding product IDs into your app.</p>
+<p>They are also central to how RevenueCat tracks and restores purchases across devices and platforms.</p>
+<p>Example: An entitlement called <code>premium</code> might be granted to users who purchase any product associated with that access level, such as monthly or yearly subscriptions.</p>
+<h2 is-upgraded>Cheat Sheet</h2>
+<p>Understanding how these four elements work together will make it easier to manage cross-platform subscriptions, experiment with pricing strategies, and deliver a seamless in-app purchase experience.</p>
+<p>For easier understanding, you can refer to the visual diagram in the RevenueCat In-App Purchases Cheat Sheet below:</p>
+<p class="image-container"><img alt="products-cheat-sheet" src="img/be12a4814590fac8.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Import Store Products" duration="3">
+        <p>To get started, go to the <strong>RevenueCat dashboard</strong>, navigate to your project, and open the <strong>Products</strong> tab under <strong>Project Catelog</strong>.</p>
+<p>Click the <strong>➕ New</strong> button in the top right corner, then select <strong>Import Products</strong> from the dropdown menu. RevenueCat will automatically fetch and display a list of available in-app products from your connected store accounts (such as the App Store or Google Play).</p>
+<p class="image-container"><img alt="import_products" src="img/73df9562640f4d79.png"></p>
+<p>Once your products have been imported, you&#39;ll see that the in-app purchase items have been successfully added to your RevenueCat project.</p>
+<p class="image-container"><img alt="imported" src="img/4d7f2aab1a4c2443.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Entitlements" duration="5">
+        <p>Now that you&#39;ve imported or created products, it&#39;s time to set up <strong>entitlements</strong>. As you&#39;ve learned, entitlements define what a user gains access to after a successful purchase.</p>
+<p>Typically, you&#39;ll want to create one or more entitlements based on your <strong>feature access tiers</strong> (e.g., <code>"pro_access"</code>). These entitlements let you control access to gated features or content within your app.</p>
+<p>To create a new entitlement:</p>
+<ol type="1">
+<li>Go to the <strong>Product Catalog</strong> in the left menu of your project dashboard.</li>
+<li>Click the <strong>Entitlements</strong> tab.</li>
+<li>Select <strong>➕ New Entitlement</strong>.</li>
+</ol>
+<p class="image-container"><img alt="create_entitlement" src="img/697e35f2f75c159b.png"></p>
+<p>You&#39;ll be prompted to enter a <strong>unique identifier</strong> for your entitlement (e.g., <code>"pro"</code>), which you&#39;ll later reference in your app to check a user&#39;s access level.</p>
+<h2 is-upgraded>Attaching Products to Entitlements</h2>
+<p>Now it&#39;s time to <strong>attach products to entitlements</strong>. This ensures that when a user purchases a product, they are granted the corresponding entitlement.</p>
+<p>To attach a product to an entitlement:</p>
+<ol type="1">
+<li>Open the <strong>Entitlements</strong> tab in the RevenueCat dashboard.</li>
+<li>Click on the entitlement you want to configure.</li>
+<li>Click the <strong>Attach</strong> button.</li>
+<li>If you&#39;ve already added your products, you&#39;ll see them in a list—just select the one you want to link.</li>
+</ol>
+<p class="image-container"><img alt="attach_entitlement" src="img/4add043633f53dba.png"></p>
+<p>When a product attached to an entitlement is purchased, the <strong>entitlement becomes active for the duration of that product</strong>.</p>
+<p>If you don&#39;t plan to implement <a href="https://www.revenuecat.com/docs/tools/paywalls" target="_blank">Paywalls</a> in your app, you can skip ahead to the <strong>Conclusion</strong> section. Otherwise, continue to the next step.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Offerings (Optional)" duration="7">
+        <p>If you want to introduce <a href="https://www.revenuecat.com/docs/tools/paywalls" target="_blank">Paywalls</a> in your app, the first step is to create Offerings. An Offering represents a set of products that are presented to users on your paywall.</p>
+<h2 is-upgraded>Adding Packages</h2>
+<p>A Package serves as a wrapper for equivalent products across different platforms. This provides a single source of truth for your products.</p>
+<p>To create a package, navigate to your newly created <strong>Offering</strong>, then click the <strong>Edit</strong> button to configure the details, and then you can add packages by clicking the <strong>+ New Package</strong> in the <strong>Packages</strong> section.</p>
+<p>From there:</p>
+<ol type="1">
+<li><strong>Choose an Identifier</strong> from the dropdown that best represents the package duration (e.g., monthly, annual).</li>
+<li><strong>Add a description</strong> to help clarify the purpose of the package.</li>
+<li><strong>Attach the relevant products</strong> that match the chosen duration (e.g., your annual iOS product).</li>
+<li>Click <strong>Save</strong> to create the package.</li>
+</ol>
+<p class="image-container"><img alt="list_packages" src="img/83c637d1923465da.png"></p>
+<p>Once you&#39;ve added all the Packages to your Offering, you&#39;ll see the results displayed as shown below:</p>
+<p class="image-container"><img alt="add_packages" src="img/58f3224b09a44546.png"></p>
+<p>Alright, time to create some awesome Paywalls!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Create Paywalls (Optional)" duration="7">
+        <p>A paywall is a screen that encourages users to purchase your products. RevenueCat&#39;s paywall system is built on a server-driven UI, allowing you to update layouts instantly using the <a href="https://www.revenuecat.com/docs/tools/paywalls-v2/creating-paywalls#using-the-editor" target="_blank">Paywall Editor</a> without needing to release a new app version.</p>
+<p class="image-container"><img alt="paywall_editor" src="img/bb98860f4bb387d2.gif"></p>
+<p>This allows your team to focus on A/B testing, refining offerings, and optimizing messaging to boost subscriptions, all without the delays of app updates.</p>
+<h2 is-upgraded>Building Paywalls</h2>
+<p>To start building, go to the <strong>Paywalls</strong> page for your project and click <strong>➕ New Paywall</strong>.</p>
+<p class="image-container"><img alt="create_paywalls" src="img/dd33b9b8059ac334.png"></p>
+<p>Next, choose a pre-built template as a starting point or begin from scratch.</p>
+<p class="image-container"><img alt="paywall_template" src="img/d6842356c1b22f56.png"></p>
+<p>In the editor, set a name for your paywall and select an identifier, which will automatically link the paywall to the corresponding Offering. Customize your content, colors, and images.</p>
+<p class="image-container"><img alt="paywall_edits" src="img/dadc30c166d40afb.png"></p>
+<p>Once you&#39;ve finished, click &#34;Save to draft&#34;. When you&#39;re ready, click &#34;Publish changes&#34; to make your paywall live.</p>
+<p>🎉 Yay! You&#39;ve completed all the configuration steps for setting up App Store products and the RevenueCat dashboard!</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="0">
+        <p>In this codelab, you&#39;ve learned how to configure App Store Connect products, connect your account to the RevenueCat dashboard, and set up products, offerings, entitlements, and paywalls. With everything now configured, you&#39;re ready to integrate the RevenueCat SDK into your project!</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

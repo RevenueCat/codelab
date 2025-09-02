@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2025-09-02T15:12:00+09:00",
+  "id": "app-store",
+  "duration": 44,
+  "title": "RevenueCat App Store Integration",
+  "summary": "RevenueCat App Store Integration",
+  "source": "codelab.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "codelab",
+    "markdown"
+  ],
+  "tags": [
+    "web"
+  ],
+  "feedback": "https://github.com/revenuecat/codelab/issues/new",
+  "ga4": "G-0MLNVKXFGB",
+  "url": "app-store"
+}
