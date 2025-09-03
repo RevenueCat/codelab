@@ -177,11 +177,11 @@ Future&lt;void&gt; purchaseProduct() async {
     print(&#39;Product found: ${productToPurchase.title}. Initiating purchase...&#39;);
 
     // 4. Initiate the purchase flow
-    final CustomerInfo customerInfo = await Purchases.purchaseStoreProduct(productToPurchase);
+    final PurchaseResult purchaseResult = await Purchases.purchaseStoreProduct(productToPurchase);
 
     // 5. Check if the purchase was successful by verifying the entitlement
     // Replace &#34;your_premium_entitlement&#34; with your actual entitlement identifier from RevenueCat
-    if (customerInfo.entitlements.all[&#34;your_premium_entitlement&#34;]?.isActive ?? false) {
+    if (purchaseResult.customerInfo.entitlements.all[&#34;your_premium_entitlement&#34;]?.isActive ?? false) {
       print(&#39;Purchase successful! User now has premium access.&#39;);
       // Grant access to premium content
     } else {
@@ -189,7 +189,7 @@ Future&lt;void&gt; purchaseProduct() async {
     }
   } on PlatformException catch (e) {
     // 6. Handle potential errors
-    final PurchasesError error = PurchasesErrorHelper.getErrorCode(e);
+    final PurchasesErrorCode error = PurchasesErrorHelper.getErrorCode(e);
     if (error == PurchasesErrorCode.purchaseCancelledError) {
       print(&#39;Purchase cancelled by user.&#39;);
     } else {
