@@ -117,9 +117,9 @@ As mentioned earlier, an entitlement represents the level of access or features 
 You can easily check if a user has an active entitlement using the code snippet below:
 
 ```dart
-val ENTITLEMENT_IDENTIFIER = ".." // get specific entitlement identifier from your RevenueCat dashboard
+const ENTITLEMENT_IDENTIFIER = ".."; // get specific entitlement identifier from your RevenueCat dashboard
 final customerInfo = await Purchases.getCustomerInfo();
-final isEntitled = customerInfo.entitlements.active["ENTITLEMENT_IDENTIFIER"]?.isActive;
+final isEntitled = customerInfo.entitlements.active[ENTITLEMENT_IDENTIFIER]?.isActive;
 ```
 
 Once you’ve checked whether the user has a specific entitlement, you can decide how to proceed based on your app’s business model.
@@ -129,7 +129,7 @@ For example, if your app is ad-supported, you might choose to show or hide an Ad
 Here’s an example of how you might implement that logic:
 
 ```dart
-if (isEntitled) {
+if (isEntitled == true) {
 // if the user is granted access to this entitlement. don't need to display a banner.
 } else {
 // display a banner UI here or display a paywall

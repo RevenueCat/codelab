@@ -119,14 +119,14 @@ Future&lt;void&gt; _initializeRevenueCat() async {
         <p>Now let&#39;s move on to validating user entitlements.</p>
 <p>As mentioned earlier, an entitlement represents the level of access or features a user unlocks after making a purchase. This makes it useful for determining things like whether to display an ad banner or grant premium access.</p>
 <p>You can easily check if a user has an active entitlement using the code snippet below:</p>
-<pre><code language="language-dart" class="language-dart">val ENTITLEMENT_IDENTIFIER = &#34;..&#34; // get specific entitlement identifier from your RevenueCat dashboard
+<pre><code language="language-dart" class="language-dart">const ENTITLEMENT_IDENTIFIER = &#34;..&#34;; // get specific entitlement identifier from your RevenueCat dashboard
 final customerInfo = await Purchases.getCustomerInfo();
-final isEntitled = customerInfo.entitlements.active[&#34;ENTITLEMENT_IDENTIFIER&#34;]?.isActive;
+final isEntitled = customerInfo.entitlements.active[ENTITLEMENT_IDENTIFIER]?.isActive;
 </code></pre>
 <p>Once you&#39;ve checked whether the user has a specific entitlement, you can decide how to proceed based on your app&#39;s business model.</p>
 <p>For example, if your app is ad-supported, you might choose to show or hide an AdMob banner. Alternatively, you could choose to display a paywall or purchase dialog, allowing users to unlock advanced features or content.</p>
 <p>Here&#39;s an example of how you might implement that logic:</p>
-<pre><code language="language-dart" class="language-dart">if (isEntitled) {
+<pre><code language="language-dart" class="language-dart">if (isEntitled == true) {
 // if the user is granted access to this entitlement. don&#39;t need to display a banner.
 } else {
 // display a banner UI here or display a paywall
