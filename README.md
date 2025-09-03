@@ -11,6 +11,15 @@ In this codelab, you'll learn how to:
 - Understanding Product, Offering, Package, and Entitlement.
 - Create paywalls using the [Paywall Editor](https://www.revenuecat.com/docs/tools/paywalls/creating-paywalls#using-the-editor).
 
+## [RevenueCat App Store Integration](https://revenuecat.github.io/codelab/app-store/app-store/index.html#0)
+
+In this codelab, you'll learn how to:
+
+- Properly configure products on App Store Connect.
+- Set up the RevenueCat dashboard and connect it to your App Store products.
+- Understanding Product, Offering, Package, and Entitlement.
+- Create paywalls using the [Paywall Editor](https://www.revenuecat.com/docs/tools/paywalls/creating-paywalls#using-the-editor).
+
 ## [Android In-App Purchases & Paywalls](https://revenuecat.github.io/codelab/android/codelab-2-android-sdk/index.html#0)
 
 In this codelab, you will:
