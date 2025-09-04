@@ -428,3 +428,7 @@ As you’ve already seen in the [Codelab: RevenueCat Google Play Integration (Cr
 ## Conclusion
 
 In this codelab, you’ve learned how to integrate RevenueCat’s Flutter SDK, implement in-app purchases, and build paywalls in Flutter. Now it’s time to ship your app and make more money! 💰
+
+You can also learn more about using the RevenueCat SDK with the resources below:
+
+- [Product Tutorials](https://www.revenuecat.com/tutorials/): Video tutorials to help you get started and get the most out of RevenueCat.
