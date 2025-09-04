@@ -296,3 +296,8 @@ Once you’ve finished, click “Save to draft”. When you're ready, click “P
 ## Conclusion
 
 In this codelab, you’ve learned how to configure App Store Connect products, connect your account to the RevenueCat dashboard, and set up products, offerings, entitlements, and paywalls. With everything now configured, you're ready to integrate the RevenueCat SDK into your project!
+
+You can also learn more about using the RevenueCat SDK with the resources below:
+
+- [Codelab: iOS In-App Purchases & Paywalls with SwiftUI](https://revenuecat.github.io/codelab/ios/ios/index.html#0) — your next step toward a fully functional monetization flow for your iOS project.
+- [Product Tutorials](https://www.revenuecat.com/tutorials/): Video tutorials to help you get started and get the most out of RevenueCat.
