@@ -7,8 +7,6 @@ status: Published
 feedback link: https://github.com/revenuecat/codelab/issues/new
 analytics_ga4_account: G-0MLNVKXFGB
 
-
-
 # iOS In-App Purchases & Paywalls with SwiftUI
 
 ## iOS In-App Purchases & Paywalls Overview
