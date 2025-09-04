@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2025-09-04T15:08:46+09:00",
+  "id": "ios",
+  "duration": 21,
+  "title": "iOS In-App Purchases \u0026 Paywalls with SwiftUI",
+  "summary": "RevenueCat iOS SDK Integration",
+  "source": "codelab.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "codelab",
+    "markdown"
+  ],
+  "tags": [
+    "web"
+  ],
+  "feedback": "https://github.com/revenuecat/codelab/issues/new",
+  "ga4": "G-0MLNVKXFGB",
+  "url": "ios"
+}

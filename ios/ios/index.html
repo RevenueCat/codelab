@@ -1,0 +1,278 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>iOS In-App Purchases &amp; Paywalls with SwiftUI</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  codelab-ga4id="G-0MLNVKXFGB"
+                  id="ios"
+                  title="iOS In-App Purchases &amp; Paywalls with SwiftUI"
+                  environment="web"
+                  feedback-link="https://github.com/revenuecat/codelab/issues/new">
+    
+      <google-codelab-step label="iOS In-App Purchases &amp; Paywalls Overview" duration="2">
+        <p>Welcome to <a href="https://www.revenuecat.com/" target="_blank">RevenueCat</a>&#39;s iOS SDK Codelab!</p>
+<p>In this codelab, you will:</p>
+<ul>
+<li>Integrate the <strong>RevenueCat SDK</strong> into your Xcode project.</li>
+<li>Implement <strong>in-app purchases</strong> in your SwiftUI application.</li>
+<li>Learn how to <strong>distinguish between paying and non-paying users</strong>.</li>
+<li>Build a <strong>paywall screen</strong> using SwiftUI, driven by RevenueCat&#39;s server-side configuration.</li>
+</ul>
+<p>By the end of this codelab, you&#39;ll be able to successfully implement in-app purchases in your iOS app and display dynamic paywalls using RevenueCat&#39;s iOS SDK and SwiftUI.</p>
+<p class="image-container"><img alt="overview" src="img/686cb99007ad736e.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Import RevenueCat SDK" duration="5">
+        <p>First things first, before implementing in-app purchases, you&#39;ll need to import the RevenueCat SDK into your project. The easiest way to do this is with the Swift Package Manager.</p>
+<p>In Xcode, add the following to your <code>Podfile</code>:</p>
+<pre><code>pod &#39;RevenueCat&#39;
+pod &#39;RevenueCatUI&#39;
+</code></pre>
+<p>Xcode will fetch the package. Make sure to add <code>RevenueCat</code> to your app&#39;s main target.</p>
+<p>If you&#39;re also planning to implement our pre-built Paywalls, you can add the <code>RevenueCatUI</code> library at the same time.</p>
+<p>Next, initialize the Purchases SDK in your App&#39;s <code>init()</code> method or in your <code>AppDelegate</code> using the code below:</p>
+<pre><code language="language-swift" class="language-swift">import SwiftUI
+import RevenueCat
+
+@main
+struct MyApp: App {
+    init() {
+        // Log all messages from the SDK
+        Purchases.logLevel = .debug
+        
+        // Configure the SDK with your API key
+        Purchases.configure(withAPIKey: &lt;public_apple_api_key&gt;, appUserID: &lt;app_user_id&gt;)
+    }
+
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+        }
+    }
+}
+</code></pre>
+<ul>
+<li><strong>User Identification:</strong> We haven&#39;t provided a specific <code>appUserID</code>, so RevenueCat will automatically generate and manage an anonymous ID for the user. If you want to use the restore features properly, please put a unique identifier that is provided by your backend.</li>
+<li><strong>Transaction Finishing:</strong> By default, the SDK automatically handles finishing transactions with the App Store, so you don&#39;t have to.</li>
+</ul>
+<p>Yes! You&#39;ve now completed 50% of the implementation.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Validating Entitlements" duration="3">
+        <p>Now let&#39;s move on to validating user entitlements.</p>
+<p>An entitlement represents the level of access or features a user unlocks after making a purchase. This makes it useful for determining things like whether to show an ad banner or grant premium access.</p>
+<p>You can easily check if a user has an active entitlement using Swift&#39;s modern <code>async/await</code> syntax:</p>
+<pre><code language="language-swift" class="language-swift">import SwiftUI
+import RevenueCat
+
+struct ContentView: View {
+    @State private var isSubscribed: Bool = false
+    
+    let ENTITLEMENT_ID = &#34;premium&#34; // Your entitlement identifier from the RevenueCat dashboard
+
+    var body: some View {
+        VStack {
+            if isSubscribed {
+                PremiumContent()
+            } else {
+                Text(&#34;This is the free content.&#34;)
+                // You could show a banner or a paywall here
+            }
+        }
+        .task {
+            // Check for entitlement when the view appears
+            await checkEntitlement()
+        }
+    }
+    
+    private func checkEntitlement() async {
+        do {
+            let customerInfo = try await Purchases.shared.customerInfo()
+            // Check if the entitlement is active
+            if customerInfo.entitlements[ENTITLEMENT_ID]?.isActive == true {
+                self.isSubscribed = true
+            } else {
+                self.isSubscribed = false
+            }
+        } catch {
+            print(&#34;Error fetching customer info: \(error)&#34;)
+        }
+    }
+}
+</code></pre>
+<p>Once you&#39;ve checked whether the user has a specific entitlement, you can decide how to proceed. In this SwiftUI example, we update a <code>@State</code> variable (<code>isSubscribed</code>) which causes the view to automatically re-render and show either the premium content or the free version.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Implement In-App Purchases" duration="4">
+        <p>Now, let&#39;s implement in-app purchases to offer a premium experience. To get started, you&#39;ll first need to fetch the products you configured in RevenueCat. This data will be used to present purchase options to your users.</p>
+<p>You can retrieve the available products by calling <code>Purchases.shared.products(productIdentifiers:)</code>:</p>
+<pre><code language="language-swift" class="language-swift">import RevenueCat
+
+class PurchaseViewModel: ObservableObject {
+    func purchase(product: StoreProduct) async {
+        do {
+            let result = try await Purchases.shared.purchase(product: product)
+            
+            // Check if the user is now entitled to premium
+            if result.customerInfo.entitlements[&#34;premium&#34;]?.isActive == true {
+                // Unlock premium content
+                print(&#34;Purchase successful!&#34;)
+            }
+        } catch {
+            print(&#34;Error purchasing: \(error)&#34;)
+        }
+    }
+    
+    func fetchProducts() async -&gt; [StoreProduct] {
+        do {
+            // Fetch products using their identifiers
+            let products = try await Purchases.shared.products([&#34;premium_monthly&#34;, &#34;premium_yearly&#34;])
+            return products
+        } catch {
+            print(&#34;Error fetching products: \(error)&#34;)
+            return []
+        }
+    }
+}
+</code></pre>
+<p>Once you&#39;ve retrieved the <code>StoreProduct</code> objects, you can initiate the <strong>in-app purchase flow</strong> by calling <code>Purchases.shared.purchase(product:)</code>. This will automatically trigger the <strong>native App Store purchase sheet</strong>, enabling the user to complete the transaction securely within your app.</p>
+<p>Just like that, you&#39;ve integrated a fully functional <strong>in-app purchase flow</strong> with just a few lines of code—no need to deal with the complexity of handling receipts, StoreKit APIs, or purchase validation manually.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Implement Paywalls" duration="7">
+        <p>Now, it&#39;s time to implement Paywalls in your iOS project using SwiftUI.</p>
+<h2 is-upgraded>Business Logic</h2>
+<p>To begin, you&#39;ll need to <strong>fetch the current offering</strong> from the RevenueCat dashboard. An offering defines the available packages (monthly, yearly, etc.) presented to the user on the paywall. This can be done effortlessly using <code>Purchases.shared.offerings()</code>:</p>
+<pre><code language="language-swift" class="language-swift">import RevenueCat
+import SwiftUI
+
+@MainActor
+class PaywallViewModel: ObservableObject {
+    @Published var offering: Offering?
+
+    func fetchOffering() async {
+        do {
+            let offerings = try await Purchases.shared.offerings()
+            self.offering = offerings.current
+        } catch {
+            print(&#34;Error fetching offerings: \(error)&#34;)
+        }
+    }
+}
+</code></pre>
+<p>The RevenueCat iOS SDK has <strong>native support for Swift&#39;s </strong></p>
+<p><strong><code>async/await</code></strong>, making it a seamless fit for modern SwiftUI applications. By publishing the <code>offering</code> with <code>@Published</code>, our SwiftUI views can reactively observe changes.</p>
+<h2 is-upgraded>Paywalls UI With SwiftUI</h2>
+<p>At this point, everything is ready. If you added the <code>RevenueCatUI</code> package, you can <strong>easily build paywall UIs using SwiftUI</strong>.</p>
+<p>RevenueCat&#39;s UI library provides a built-in SwiftUI view, <code>PaywallView</code>, that allows you to <strong>quickly display a paywall screen</strong>. This component is fully customizable using standard SwiftUI modifiers.</p>
+<p>Here&#39;s an example showing how simple it is to implement and display a paywall using SwiftUI&#39;s sheet modifier:</p>
+<pre><code language="language-swift" class="language-swift">import SwiftUI
+import RevenueCat
+import RevenueCatUI
+
+struct ContentView: View {
+    @State private var showPaywall = false
+
+    var body: some View {
+        Button(&#34;Show Paywall&#34;) {
+            showPaywall = true
+        }
+        .sheet(isPresented: $showPaywall) {
+            // Display the paywall in a sheet
+            PaywallView()
+        }
+    }
+}
+</code></pre>
+<p>The <code>PaywallView</code> will automatically fetch the current offering and display it using the template you configured on the RevenueCat dashboard. You can also pass in an <code>Offering</code> object directly if you&#39;ve already fetched it.</p>
+<p>You can attach this modifier to a top-level view in your app, such as the root view. It automatically takes care of the presentation logic for you.</p>
+<p>On iPhone, RevenueCat Paywalls can be displayed either in a sheet or fullscreen, and you have several options for integrating them in SwiftUI or UIKit:</p>
+<ul>
+<li>Automatic presentation based on an entitlement using presentPaywa`llIfNeeded</li>
+<li>Custom presentation logic with <code>presentPaywallIfNeeded</code></li>
+<li>Manual integration using PaywallView or <code>PaywallViewController</code></li>
+</ul>
+<p>For example:</p>
+<pre><code language="language-swift" class="language-swift">import SwiftUI
+import RevenueCat
+import RevenueCatUI
+
+@main
+struct MyApp: App {
+    // ... (init code) ...
+
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+                // This modifier will check for the &#34;premium&#34; entitlement.
+                // If the user doesn&#39;t have it, a paywall sheet is presented.
+                .presentPaywallIfNeeded(
+                    requiredEntitlementIdentifier: &#34;premium&#34;,
+                    purchaseCompleted: { customerInfo in
+                        // This is a great place to celebrate the purchase!
+                        print(&#34;Purchase completed: \(customerInfo.entitlements)&#34;)
+                    },
+                    restoreCompleted: { customerInfo in
+                        // The paywall is dismissed automatically if the entitlement is now active.
+                        print(&#34;Restore completed: \(customerInfo.entitlements)&#34;)
+                    }
+                )
+        }
+    }
+}
+</code></pre>
+<p>Configuration! 🥳 Now, you&#39;ll be able to display paywalls whenever a user doesn&#39;t have the required entitlement, using the exact same design you configured in the Paywall Editor.</p>
+<p>As you&#39;ve already seen, the paywall system is built on a <strong>server-driven UI</strong>. This means you can dynamically update the paywall&#39;s content and design directly from the dashboard without needing to push app updates or go through App Store review.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="0">
+        <p>In this codelab, you&#39;ve learned how to integrate RevenueCat&#39;s iOS SDK, implement in-app purchases, and build paywalls in SwiftUI. Now it&#39;s time to ship your app and make more money! 💰</p>
+<p>You can also learn more about using the RevenueCat SDK in your iOS project with SwiftUI through the resources below:</p>
+<ul>
+<li><a href="https://github.com/RevenueCat/magic-weather-swift" target="_blank">GitHub: MagicWeather Swift (Sample App)</a></li>
+<li><a href="https://www.revenuecat.com/blog/engineering/getting-started-with-in-app-purchases-in-swiftui/" target="_blank">Blog: Getting Started with In-App Purchases in SwiftUI</a></li>
+<li><a href="https://www.revenuecat.com/docs/displaying-paywalls-with-revenuecatui" target="_blank">Documentation: Displaying Paywalls with RevenueCatUI</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
