@@ -173,20 +173,43 @@ Now, it's time to implement Paywalls in your iOS project using SwiftUI.
 To begin, you’ll need to **fetch the current offering** from the RevenueCat dashboard. An offering defines the available packages (monthly, yearly, etc.) presented to the user on the paywall. This can be done effortlessly using `Purchases.shared.offerings()`:
 
 ```swift
+import Foundation
 import RevenueCat
 import SwiftUI
 
-@MainActor
+@MainActor // Ensures changes to @Published properties happen on the main thread
 class PaywallViewModel: ObservableObject {
+    
+    // This will hold the current offering to be displayed on the paywall.
     @Published var offering: Offering?
+    
+    // This will track the loading state to show an indicator in the UI.
+    @Published var isLoading: Bool = false
 
+    init() {
+        // You can fetch the offering as soon as the ViewModel is created.
+        Task {
+            await fetchOffering()
+        }
+    }
+
+    /**
+     * Fetches the current offering from RevenueCat and updates the @Published property.
+     */
     func fetchOffering() async {
+        self.isLoading = true
+        
         do {
             let offerings = try await Purchases.shared.offerings()
+            // We get the 'current' offering, which is the one you've configured
+            // to be displayed on the dashboard for this placement.
             self.offering = offerings.current
         } catch {
-            print("Error fetching offerings: \(error)")
+            print("Error fetching offerings: \(error.localizedDescription)")
+            // You might want to handle the error state in the UI as well
         }
+        
+        self.isLoading = false
     }
 }
 ```
@@ -221,9 +244,57 @@ struct ContentView: View {
 }
 ```
 
-The `PaywallView` will automatically fetch the current offering and display it using the template you configured on the RevenueCat dashboard. You can also pass in an `Offering` object directly if you've already fetched it.
+The `PaywallView` will automatically fetch the current offering and display it using the template you configured on the RevenueCat dashboard. You can also pass in an `Offering` object directly if you've already fetched it:
 
-You can attach this modifier to a top-level view in your app, such as the root view. It automatically takes care of the presentation logic for you.
+```swift
+import SwiftUI
+import RevenueCat
+import RevenueCatUI
+
+struct ContentView: View {
+    // This will trigger the presentation of the paywall sheet.
+    @State private var showPaywall = false
+    
+    // Create an instance of the ViewModel for the paywall.
+    // @StateObject ensures it has the same lifecycle as the view.
+    @StateObject private var paywallViewModel = PaywallViewModel()
+
+    var body: some View {
+        VStack(spacing: 20) {
+            Text("Welcome to the App!")
+            
+            Button("Upgrade to Premium") {
+                // When the button is tapped, set the flag to show the sheet.
+                showPaywall = true
+            }
+        }
+        .sheet(isPresented: $showPaywall) {
+            // This is the content of the sheet.
+            // It will display the PaywallView and pass the offering from our ViewModel.
+            
+            // We can show a loading indicator while the offering is being fetched.
+            if paywallViewModel.isLoading {
+                ProgressView()
+            } else if let offering = paywallViewModel.offering {
+                // Once the offering is available, pass it to the PaywallView.
+                PaywallView(offering: offering)
+            } else {
+                // Optional: Show an error or a message if the offering couldn't be loaded.
+                Text("Sorry, we couldn't load the subscription options at this time.")
+            }
+        }
+        .onAppear {
+            // You can also refresh the offering when the view appears,
+            // though the ViewModel's init already handles the first fetch.
+            // Task {
+            //     await paywallViewModel.fetchOffering()
+            // }
+        }
+    }
+}
+```
+
+You can attach some modifiers to a top-level view in your app, such as the root view. It automatically takes care of the presentation logic for you.
 
 On iPhone, RevenueCat Paywalls can be displayed either in a sheet or fullscreen, and you have several options for integrating them in SwiftUI or UIKit:
 
