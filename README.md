@@ -29,6 +29,15 @@ In this codelab, you will:
 - Learn how to distinguish between paying and non-paying users
 - Build a paywall screen, which is based on the server-driven UI approach
 
+## [iOS In-App Purchases & Paywalls with SwiftUI](https://revenuecat.github.io/codelab/ios/ios/index.html#0)
+
+In this codelab, you will:
+
+- Integrate the RevenueCat SDK into your Xcode project.
+- Implement in-app purchases in your SwiftUI application.
+- Learn how to distinguish between paying and non-paying users.
+- Build a paywall screen using SwiftUI, driven by RevenueCat's server-side configuration.
+
 ## [Kotlin Multiplatform Purchases & Paywalls Overview](https://revenuecat.github.io/codelab/kmp/codelab-3-kmp-sdk/index.html#0)
 
 In this codelab, you will:
