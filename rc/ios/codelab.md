@@ -344,6 +344,6 @@ In this codelab, you’ve learned how to integrate RevenueCat’s iOS SDK, imple
 
 You can also learn more about using the RevenueCat SDK in your iOS project with SwiftUI through the resources below:
 
-- [GitHub: MagicWeather Swift (Sample App)](https://github.com/RevenueCat/magic-weather-swift)
-- [Blog: Getting Started with In-App Purchases in SwiftUI](https://www.revenuecat.com/blog/engineering/getting-started-with-in-app-purchases-in-swiftui/)
-- [Documentation: Displaying Paywalls with RevenueCatUI](https://www.revenuecat.com/docs/displaying-paywalls-with-revenuecatui)
+- [RevenueCat App Store Integration](https://revenuecat.github.io/codelab/app-store/app-store/index.html#0t)
+- [Blog: iOS In-App Subscription Tutorial with StoreKit 2 and Swift](https://www.revenuecat.com/blog/engineering/ios-in-app-subscription-tutorial-with-storekit-2-and-swift/)
+- [Documentation: Displaying Paywalls with RevenueCatUI](https://www.revenuecat.com/docs/tools/paywalls/displaying-paywalls)
