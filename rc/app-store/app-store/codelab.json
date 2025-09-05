@@ -3,7 +3,7 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2025-09-04T15:27:37+09:00",
+  "updated": "2025-09-05T10:44:11+09:00",
   "id": "app-store",
   "duration": 44,
   "title": "RevenueCat App Store Integration",
@@ -21,6 +21,6 @@
     "web"
   ],
   "feedback": "https://github.com/revenuecat/codelab/issues/new",
-  "ga4": "G-0MLNVKXFGB",
+  "ga4": "G-MMFEH1TP0C",
   "url": "app-store"
 }
