@@ -1,4 +1,4 @@
-# RevenueCat Codelab
+# [RevenueCat Codelab](https://revenuecat.github.io/)
 
 This codelab is a step-by-step tutorial designed to help you learn and master the [RevenueCat SDK](https://www.revenuecat.com/docs/welcome/overview) taking you from the absolute basics to more advanced implementation. Whether you're just getting started or looking to deepen your understanding, this guide walks you through everything you need to go from zero to hero with RevenueCat.
 
