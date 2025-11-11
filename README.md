@@ -55,7 +55,7 @@ In this codelab, you will:
 - Learn how to distinguish between paying and non-paying users
 - Build a paywall screen, which is based on the server-driven UI approach
 
-## [React Native Purchases & Paywalls Overview](https://revenuecat.github.io/codelab/rc/react-native/codelab-5-react-native-sdk/index.html#0)
+## [React Native Purchases & Paywalls Overview](https://revenuecat.github.io/codelab/react-native/codelab-5-react-native-sdk/index.html#0)
 
 In this codelab, you will:
 - Integrate the RevenueCat SDK into your React Native project
