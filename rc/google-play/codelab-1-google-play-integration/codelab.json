@@ -3,12 +3,12 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2025-09-05T10:42:28+09:00",
+  "updated": "2025-11-11T09:45:54+09:00",
   "id": "codelab-1-google-play-integration",
   "duration": 51,
   "title": "RevenueCat Google Play Integration",
   "summary": "RevenueCat Google Play Integration",
-  "source": "codelab.md",
+  "source": "rc/google-play/codelab.md",
   "theme": "",
   "status": [
     "published"
