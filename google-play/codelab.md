@@ -51,6 +51,10 @@ First, log in to the [Google Play Console](https://play.google.com/console), sel
 
 Basically, there are two types of products you can create on Google Play: **In-app products** and **Subscriptions**.
 
+If you haven't uploaded any APK yet, as shown in the image below, you should upload your APK first before setting up products. You can upload your APK by navigating to the **Release** section in the sidebar.
+
+![upload-new-apk](img/24.upload-new-apk.png)
+
 ### In-app products
 
 These are one-time purchases that unlock features or content permanently. Examples include removing ads, unlocking a premium feature, or purchasing in-game currency.
