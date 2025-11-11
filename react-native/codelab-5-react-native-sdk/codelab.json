@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2025-11-11T09:32:54+09:00",
+  "id": "codelab-5-react-native-sdk",
+  "duration": 21,
+  "title": "React Native In-App Purchases \u0026 Paywalls",
+  "summary": "RevenueCat React Native SDK Integration",
+  "source": "codelab.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "codelab",
+    "markdown"
+  ],
+  "tags": [
+    "web"
+  ],
+  "feedback": "https://github.com/revenuecat/codelab/issues/new",
+  "ga4": "G-MMFEH1TP0C",
+  "url": "codelab-5-react-native-sdk"
+}

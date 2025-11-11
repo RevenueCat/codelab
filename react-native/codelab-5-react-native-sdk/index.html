@@ -1,0 +1,518 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>React Native In-App Purchases &amp; Paywalls</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  codelab-ga4id="G-MMFEH1TP0C"
+                  id="codelab-5-react-native-sdk"
+                  title="React Native In-App Purchases &amp; Paywalls"
+                  environment="web"
+                  feedback-link="https://github.com/revenuecat/codelab/issues/new">
+    
+      <google-codelab-step label="React Native In-App Purchases &amp; Paywalls Overview" duration="2">
+        <p>Welcome to <a href="https://www.revenuecat.com/" target="_blank">RevenueCat</a>&#39;s React Native SDK Codelab!</p>
+<p><strong>Goal:</strong> In this codelab, you will learn how to integrate the RevenueCat React Native SDK into a new React Native application to fetch product offerings and display a pre-built, native paywall UI.</p>
+<p><strong>What you&#39;ll build:</strong></p>
+<p>A simple one-screen app that shows a loading indicator, fetches your configured &#34;Offering&#34; from RevenueCat, and then displays the <code>RevenueCatUI</code> paywall.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<p>Before you start, you must have the following set up:</p>
+<ol type="1">
+<li><strong>React Native Environment:</strong> Your React Native development environment should be ready with Node.js, React Native CLI, and required platform-specific tools.</li>
+<li><strong>Platform Requirements:</strong><ul>
+<li>iOS: Minimum deployment target of 13.4</li>
+<li>Android: Minimum API level 23 (version 6.0)</li>
+<li>React Native version 0.64 or higher</li>
+</ul>
+</li>
+<li><strong>RevenueCat Account:</strong> A free account at <a href="https://revenuecat.com" target="_blank">revenuecat.com</a>.</li>
+<li><strong>App Store / Play Store Configuration:</strong><ul>
+<li>An in-app product (subscription or one-time purchase) created in either App Store Connect or Google Play Console. If you want to learn more about configuring Google Play, check out <a href="https://revenuecat.github.io/codelab/google-play/codelab-1-google-play-integration/index.html#0" target="_blank">Codelab1: RevenueCat Google Play Integration</a>.</li>
+<li>This product linked to an <strong>Entitlement</strong> and an <strong>Offering</strong> within your RevenueCat dashboard. This is the most critical step. If you have no &#34;Current&#34; offering, the paywall will not show.</li>
+</ul>
+</li>
+<li><strong>A Physical Device or Configured Emulator:</strong> For testing in-app purchases.</li>
+</ol>
+<p>By the end of this codelab, you&#39;ll be able to successfully implement in-app purchases in your React Native app and display dynamic paywalls using RevenueCat&#39;s React Native SDK.</p>
+<p class="image-container"><img alt="overview" src="img/686cb99007ad736e.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Import RevenueCat SDK" duration="5">
+        <p>First things first, before implementing in-app purchases, you&#39;ll need to import the RevenueCat SDK into your existing or new project. To get started, add the following dependency to your project:</p>
+<p>You can check out the <a href="https://github.com/RevenueCat/purchases-react-native/releases" target="_blank">latest release version on GitHub</a>.</p>
+<h2 is-upgraded>Installation</h2>
+<p>Using npm:</p>
+<pre><code language="language-bash" class="language-bash">npm install --save react-native-purchases
+</code></pre>
+<p>Or using yarn:</p>
+<pre><code language="language-bash" class="language-bash">yarn add react-native-purchases
+</code></pre>
+<h2 is-upgraded>Platform-Specific Configuration</h2>
+<h3 is-upgraded>iOS Setup</h3>
+<p>For iOS, you need to enable the &#34;In-App Purchase&#34; capability:</p>
+<ol type="1">
+<li>Open your project in Xcode</li>
+<li>Select your project target</li>
+<li>Go to &#34;Signing &amp; Capabilities&#34;</li>
+<li>Click &#34;+ Capability&#34; and add &#34;In-App Purchase&#34;</li>
+</ol>
+<h3 is-upgraded>Android Setup</h3>
+<p>For Android, add the billing permission to your <code>AndroidManifest.xml</code>:</p>
+<pre><code language="language-xml" class="language-xml">&lt;uses-permission android:name=&#34;com.android.vending.BILLING&#34; /&gt;
+</code></pre>
+<p>Also, ensure your Activity&#39;s <code>launchMode</code> is set to <code>standard</code> or <code>singleTop</code> in <code>AndroidManifest.xml</code>:</p>
+<pre><code language="language-xml" class="language-xml">&lt;activity
+  android:name=&#34;.MainActivity&#34;
+  android:launchMode=&#34;standard&#34;
+  ...
+/&gt;
+</code></pre>
+<h2 is-upgraded>Initialize RevenueCat SDK</h2>
+<p>Now, let&#39;s initialize the RevenueCat SDK. We will do this in your main <code>App.js</code> or <code>App.tsx</code> file.</p>
+<ol type="1">
+<li>Open <code>App.js</code> (or <code>App.tsx</code> for TypeScript projects)</li>
+<li>Import the SDK at the top of the file</li>
+<li><strong>Paste your API keys</strong> into the constants</li>
+</ol>
+<pre><code language="language-javascript" class="language-javascript">// App.js
+
+import React, { useEffect, useState } from &#39;react&#39;;
+import { Platform, View, Text, ActivityIndicator, StyleSheet } from &#39;react-native&#39;;
+import Purchases from &#39;react-native-purchases&#39;;
+
+// --- PASTE YOUR REVENUECAT KEYS HERE ---
+const androidApiKey = &#39;goog_YOUR_KEY_HERE&#39;;
+const iosApiKey = &#39;appl_YOUR_KEY_HERE&#39;;
+
+const App = () =&gt; {
+  const [isConfigured, setIsConfigured] = useState(false);
+
+  useEffect(() =&gt; {
+    const initializePurchases = async () =&gt; {
+      try {
+        // Enable debug logs for development
+        Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
+
+        // Configure the SDK with the appropriate API key
+        if (Platform.OS === &#39;ios&#39;) {
+          await Purchases.configure({ apiKey: iosApiKey });
+        } else if (Platform.OS === &#39;android&#39;) {
+          await Purchases.configure({ apiKey: androidApiKey });
+        }
+
+        console.log(&#39;RevenueCat configured successfully!&#39;);
+        setIsConfigured(true);
+      } catch (e) {
+        console.error(&#39;Error configuring RevenueCat:&#39;, e);
+      }
+    };
+
+    initializePurchases();
+  }, []);
+
+  if (!isConfigured) {
+    return (
+      &lt;View style={styles.centered}&gt;
+        &lt;ActivityIndicator size=&#34;large&#34; /&gt;
+        &lt;Text style={styles.loadingText}&gt;Initializing RevenueCat...&lt;/Text&gt;
+      &lt;/View&gt;
+    );
+  }
+
+  // Main app content will go here in the next steps
+  return (
+    &lt;View style={styles.container}&gt;
+      &lt;Text&gt;RevenueCat is ready!&lt;/Text&gt;
+    &lt;/View&gt;
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: &#39;center&#39;,
+    alignItems: &#39;center&#39;,
+    backgroundColor: &#39;#fff&#39;,
+  },
+  centered: {
+    flex: 1,
+    justifyContent: &#39;center&#39;,
+    alignItems: &#39;center&#39;,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+  },
+});
+
+export default App;
+</code></pre>
+<p>We just created a basic React Native app that initializes the RevenueCat SDK using the <code>useEffect</code> hook. This ensures the SDK is configured and ready before any purchases are made. This is the correct way to initialize plugins that need to be available right from the start.</p>
+<p>Yes! You&#39;ve now completed 50% of the implementation.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Validating Entitlements" duration="3">
+        <p>Now let&#39;s move on to validating user entitlements.</p>
+<p>As mentioned earlier, an entitlement represents the level of access or features a user unlocks after making a purchase. This makes it useful for determining things like whether to display an ad banner or grant premium access.</p>
+<p>You can easily check if a user has an active entitlement using the code snippet below:</p>
+<pre><code language="language-javascript" class="language-javascript">const ENTITLEMENT_IDENTIFIER = &#34;..&#34;; // get specific entitlement identifier from your RevenueCat dashboard
+
+try {
+  const customerInfo = await Purchases.getCustomerInfo();
+  const isEntitled = customerInfo.entitlements.active[ENTITLEMENT_IDENTIFIER]?.isActive;
+
+  if (isEntitled) {
+    // User has access to this entitlement
+    console.log(&#39;User is entitled&#39;);
+  } else {
+    // User does not have access
+    console.log(&#39;User is not entitled&#39;);
+  }
+} catch (e) {
+  console.error(&#39;Error checking entitlement:&#39;, e);
+}
+</code></pre>
+<p>Once you&#39;ve checked whether the user has a specific entitlement, you can decide how to proceed based on your app&#39;s business model.</p>
+<p>For example, if your app is ad-supported, you might choose to show or hide an AdMob banner. Alternatively, you could choose to display a paywall or purchase dialog, allowing users to unlock advanced features or content.</p>
+<p>Here&#39;s an example of how you might implement that logic:</p>
+<pre><code language="language-javascript" class="language-javascript">if (isEntitled) {
+  // if the user is granted access to this entitlement, don&#39;t need to display a banner.
+} else {
+  // display a banner UI here or display a paywall
+}
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Implement In-App Purchases" duration="4">
+        <p>Now, let&#39;s implement in-app purchases to offer an ad-free experience. To get started, you&#39;ll first need to fetch the relevant product information from your RevenueCat dashboard. This product data will be used to present purchase options to your users.</p>
+<p>You can retrieve the available products by calling <code>Purchases.getProducts()</code>, as shown in the example below:</p>
+<pre><code language="language-javascript" class="language-javascript">// Fetches the product information from the RevenueCat server
+const products = await Purchases.getProducts([&#39;paywall_tester.subs&#39;]);
+
+// Proceed with in-app purchase
+const purchaseResult = await Purchases.purchaseStoreProduct(products[0]);
+</code></pre>
+<p>If you offer multiple product variations, such as <code>paywall_tester.subs:weekly</code>, <code>paywall_tester.subs:monthly</code>, and <code>paywall_tester.subs:yearly</code>, you can simplify product retrieval by using the <strong>base product identifier</strong>, <code>paywall_tester.subs</code>, as the value for the <code>productIds</code> field. This tells RevenueCat to fetch <strong>all related product variations</strong> as a list, so you can dynamically present them in your paywall UI.</p>
+<p>Once you&#39;ve retrieved the product data, you can initiate the <strong>in-app purchase flow</strong> by calling <code>Purchases.purchaseStoreProduct(product)</code>. This will automatically trigger the <strong>Google Play purchase dialog</strong> or <strong>Apple&#39;s purchase sheet</strong>, enabling the user to complete the transaction within your app.</p>
+<p>Just like that, you&#39;ve integrated a fully functional <strong>in-app purchase flow</strong> with just a few lines of code—no need to deal with the complexity of handling receipts, store APIs, or purchase validation manually.</p>
+<p>So the full example of code will look like below:</p>
+<pre><code language="language-javascript" class="language-javascript">import Purchases from &#39;react-native-purchases&#39;;
+
+/**
+ * Fetches a specific product by its ID and initiates the purchase flow.
+ *
+ * This function handles potential errors like the product not being found,
+ * the user canceling the purchase, or other store errors.
+ */
+const purchaseProduct = async () =&gt; {
+  // 1. Define the product identifier you want to fetch.
+  const productId = &#39;paywall_tester.subs&#39;;
+
+  try {
+    // 2. Fetch the StoreProduct(s) from RevenueCat
+    console.log(&#39;Fetching products...&#39;);
+    const products = await Purchases.getProducts([productId]);
+
+    // 3. Check if the product list is not empty
+    if (products.length === 0) {
+      console.error(&#39;Error: Product not found. Check the ID and your RevenueCat setup.&#39;);
+      // Optionally, show an error message to the user
+      return;
+    }
+
+    const productToPurchase = products[0];
+    console.log(&#39;Product found:&#39;, productToPurchase.title, &#39;. Initiating purchase...&#39;);
+
+    // 4. Initiate the purchase flow
+    const { customerInfo } = await Purchases.purchaseStoreProduct(productToPurchase);
+
+    // 5. Check if the purchase was successful by verifying the entitlement
+    // Replace &#34;your_premium_entitlement&#34; with your actual entitlement identifier from RevenueCat
+    if (customerInfo.entitlements.active[&#39;your_premium_entitlement&#39;]?.isActive) {
+      console.log(&#39;Purchase successful! User now has premium access.&#39;);
+      // Grant access to premium content
+    } else {
+      console.log(&#39;Purchase completed, but entitlement is not active.&#39;);
+    }
+  } catch (e) {
+    // 6. Handle potential errors
+    if (e.code === Purchases.PURCHASES_ERROR_CODE.PURCHASE_CANCELLED_ERROR) {
+      console.log(&#39;Purchase cancelled by user.&#39;);
+    } else {
+      console.error(&#39;Purchase failed with error:&#39;, e.message);
+    }
+  }
+};
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Implement Paywalls" duration="7">
+        <p>Now, it&#39;s time to implement Paywalls in React Native.</p>
+<h2 is-upgraded>Step 1: Install RevenueCatUI Package</h2>
+<p>First, install the RevenueCatUI package that provides pre-built paywall components:</p>
+<pre><code language="language-bash" class="language-bash">npm install --save react-native-purchases-ui
+# or
+yarn add react-native-purchases-ui
+</code></pre>
+<h2 is-upgraded>Step 2: Import RevenueCatUI</h2>
+<p>Import the paywall presentation method at the top of your file:</p>
+<pre><code language="language-javascript" class="language-javascript">import { presentPaywallIfNeeded } from &#39;react-native-purchases-ui&#39;;
+</code></pre>
+<h2 is-upgraded>Step 3: Fetch Offerings and Display Paywall</h2>
+<p>Let&#39;s update our <code>App.js</code> to fetch offerings and display the paywall. Replace your existing app code with:</p>
+<pre><code language="language-javascript" class="language-javascript">// App.js
+
+import React, { useEffect, useState } from &#39;react&#39;;
+import {
+  Platform,
+  View,
+  Text,
+  ActivityIndicator,
+  StyleSheet,
+  SafeAreaView,
+} from &#39;react-native&#39;;
+import Purchases from &#39;react-native-purchases&#39;;
+import { presentPaywallIfNeeded } from &#39;react-native-purchases-ui&#39;;
+
+// --- PASTE YOUR REVENUECAT KEYS HERE ---
+const androidApiKey = &#39;goog_YOUR_KEY_HERE&#39;;
+const iosApiKey = &#39;appl_YOUR_KEY_HERE&#39;;
+
+const App = () =&gt; {
+  const [isConfigured, setIsConfigured] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [offering, setOffering] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+
+  useEffect(() =&gt; {
+    const initializePurchases = async () =&gt; {
+      try {
+        // Enable debug logs for development
+        Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
+
+        // Configure the SDK with the appropriate API key
+        if (Platform.OS === &#39;ios&#39;) {
+          await Purchases.configure({ apiKey: iosApiKey });
+        } else if (Platform.OS === &#39;android&#39;) {
+          await Purchases.configure({ apiKey: androidApiKey });
+        }
+
+        console.log(&#39;RevenueCat configured successfully!&#39;);
+        setIsConfigured(true);
+      } catch (e) {
+        console.error(&#39;Error configuring RevenueCat:&#39;, e);
+        setErrorMessage(&#39;Failed to initialize RevenueCat&#39;);
+        setIsLoading(false);
+      }
+    };
+
+    initializePurchases();
+  }, []);
+
+  useEffect(() =&gt; {
+    if (!isConfigured) return;
+
+    const loadOfferings = async () =&gt; {
+      try {
+        setIsLoading(true);
+        setErrorMessage(null);
+
+        // Get the current offerings from RevenueCat
+        const offerings = await Purchases.getOfferings();
+
+        if (offerings.current !== null) {
+          setOffering(offerings.current);
+        } else {
+          setErrorMessage(&#39;No current offering found. Check your RevenueCat dashboard.&#39;);
+        }
+      } catch (e) {
+        console.error(&#39;Error fetching offerings:&#39;, e);
+        setErrorMessage(`Failed to load offerings: ${e.message}`);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadOfferings();
+  }, [isConfigured]);
+
+  useEffect(() =&gt; {
+    if (!offering) return;
+
+    const showPaywall = async () =&gt; {
+      try {
+        const paywallResult = await presentPaywallIfNeeded({
+          offering: offering,
+        });
+
+        console.log(&#39;Paywall result:&#39;, paywallResult);
+
+        if (paywallResult === Purchases.PAYWALL_RESULT.PURCHASED) {
+          console.log(&#39;User made a purchase!&#39;);
+        } else if (paywallResult === Purchases.PAYWALL_RESULT.RESTORED) {
+          console.log(&#39;User restored purchases!&#39;);
+        } else if (paywallResult === Purchases.PAYWALL_RESULT.CANCELLED) {
+          console.log(&#39;User cancelled the paywall&#39;);
+        }
+      } catch (e) {
+        console.error(&#39;Error presenting paywall:&#39;, e);
+      }
+    };
+
+    showPaywall();
+  }, [offering]);
+
+  if (isLoading) {
+    return (
+      &lt;SafeAreaView style={styles.centered}&gt;
+        &lt;ActivityIndicator size=&#34;large&#34; color=&#34;#6366f1&#34; /&gt;
+        &lt;Text style={styles.loadingText}&gt;Loading Paywall...&lt;/Text&gt;
+      &lt;/SafeAreaView&gt;
+    );
+  }
+
+  if (errorMessage) {
+    return (
+      &lt;SafeAreaView style={styles.centered}&gt;
+        &lt;Text style={styles.errorText}&gt;{errorMessage}&lt;/Text&gt;
+      &lt;/SafeAreaView&gt;
+    );
+  }
+
+  return (
+    &lt;SafeAreaView style={styles.container}&gt;
+      &lt;Text style={styles.title}&gt;RevenueCat Paywall Demo&lt;/Text&gt;
+      &lt;Text style={styles.subtitle}&gt;Paywall displayed successfully!&lt;/Text&gt;
+    &lt;/SafeAreaView&gt;
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: &#39;center&#39;,
+    alignItems: &#39;center&#39;,
+    backgroundColor: &#39;#fff&#39;,
+    padding: 20,
+  },
+  centered: {
+    flex: 1,
+    justifyContent: &#39;center&#39;,
+    alignItems: &#39;center&#39;,
+    backgroundColor: &#39;#fff&#39;,
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: &#39;#666&#39;,
+  },
+  errorText: {
+    fontSize: 16,
+    color: &#39;#ef4444&#39;,
+    textAlign: &#39;center&#39;,
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: &#39;bold&#39;,
+    marginBottom: 8,
+    color: &#39;#111&#39;,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: &#39;#666&#39;,
+  },
+});
+
+export default App;
+</code></pre>
+<p><strong>What did we just do?</strong></p>
+<ol type="1">
+<li>We created state variables to manage loading states, offerings, and error messages.</li>
+<li>We first initialize RevenueCat SDK when the component mounts.</li>
+<li>Once configured, we fetch offerings using <code>Purchases.getOfferings()</code>.</li>
+<li>When an offering is available, we automatically present the paywall using <code>presentPaywallIfNeeded()</code>.</li>
+<li>We handle various paywall results including purchases, restores, and cancellations.</li>
+</ol>
+<h2 is-upgraded>Step 4: Run Your Application</h2>
+<p>You&#39;re Done!</p>
+<p>Now, run your application on a device or emulator:</p>
+<p>For iOS:</p>
+<pre><code language="language-bash" class="language-bash">npx react-native run-ios
+</code></pre>
+<p>For Android:</p>
+<pre><code language="language-bash" class="language-bash">npx react-native run-android
+</code></pre>
+<p>You should see:</p>
+<ol type="1">
+<li>A &#34;Loading Paywall...&#34; message with a spinner.</li>
+<li>Followed by your fully functional, native paywall UI like the image below.</li>
+</ol>
+<p class="image-container"><img alt="result" src="img/e9ae71777f343c1.png"></p>
+<h2 is-upgraded>Troubleshooting</h2>
+<p>If the paywall doesn&#39;t appear, check the debug console and review these common issues:</p>
+<ul>
+<li><strong>&#34;No current offering found&#34;</strong>: This is the most common error. It means your RevenueCat dashboard is missing a &#34;current&#34; offering. Go to <strong>Offerings</strong>, select an offering, and make sure it&#39;s marked as &#34;current&#34;.</li>
+<li><strong>Incorrect API Keys</strong>: Double-check that you&#39;ve copied the correct public API key for the platform you&#39;re testing.</li>
+<li><strong>Products Not Configured</strong>: Ensure your in-app products in the store consoles are correctly set up and linked to an entitlement and offering in RevenueCat.</li>
+<li><strong>Sandbox/Test User Issues</strong>: Make sure you are logged in with a sandbox tester account (iOS) or your email is added as a license tester (Android).</li>
+<li><strong>Platform-Specific Issues</strong>: <ul>
+<li>iOS: Verify In-App Purchase capability is enabled in Xcode</li>
+<li>Android: Check that BILLING permission is in AndroidManifest.xml</li>
+</ul>
+</li>
+</ul>
+<p>Configuration! 🥳 Now, you&#39;ll be able to display paywalls whenever a user doesn&#39;t have the required entitlement, using the exact same design you configured in the Paywall Editor.</p>
+<p>As you&#39;ve already seen in the <a href="https://revenuecat.github.io/codelab-internal-testing/google-play/codelab-1-google-play-integration/index.html#7" target="_blank">Codelab: RevenueCat Google Play Integration (Create Paywalls)</a>, the paywall system is built on a <strong>server-driven UI</strong>. This means you can dynamically update the paywall&#39;s content and design directly from the dashboard without needing to push app updates or go through the review process.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="0">
+        <p>In this codelab, you&#39;ve learned how to integrate RevenueCat&#39;s React Native SDK, implement in-app purchases, and build paywalls in React Native. Now it&#39;s time to ship your app and make more money! 💰</p>
+<p>You can also learn more about using the RevenueCat SDK with the resources below:</p>
+<ul>
+<li><a href="https://www.revenuecat.com/tutorials/" target="_blank">Product Tutorials</a>: Video tutorials to help you get started and get the most out of RevenueCat.</li>
+<li><a href="https://www.revenuecat.com/docs/getting-started/installation/reactnative" target="_blank">React Native SDK Reference</a>: Complete SDK documentation for React Native.</li>
+<li><a href="https://community.revenuecat.com/" target="_blank">RevenueCat Community</a>: Join our community to ask questions and share your experience.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
