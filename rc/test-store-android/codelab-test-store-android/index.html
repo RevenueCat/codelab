@@ -1,0 +1,743 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Set up Test Store for Android</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="codelab-test-store-android"
+                  title="Set up Test Store for Android"
+                  environment="web"
+                  feedback-link="https://github.com/revenuecat/codelab/issues/new">
+    
+      <google-codelab-step label="Test Store Overview" duration="2">
+        <p>Welcome to the <strong>RevenueCat Test Store</strong> setup guide for Android!</p>
+<p>Testing in-app purchases has always been challenging. You need to configure sandbox accounts, create test products, wait for app review, and deal with flaky network conditions. <strong>RevenueCat&#39;s Test Store</strong> eliminates these pain points by providing a deterministic, fast, and reliable testing environment.</p>
+<h2 is-upgraded>What is Test Store?</h2>
+<p>Test Store is RevenueCat&#39;s built-in testing environment that allows you to test in-app purchase flows without connecting to Google Play Store. It&#39;s automatically provisioned with every new RevenueCat project and gives you complete control over purchase outcomes.</p>
+<h2 class="checklist" is-upgraded>What you&#39;ll learn</h2>
+<p>This codelab will guide you through the complete process of setting up and using RevenueCat&#39;s Test Store for Android development. You&#39;ll start by enabling Test Store in your RevenueCat dashboard and configuring your Android application to use Test Store API keys. Then, you&#39;ll learn how to test purchase flows with deterministic outcomes, write automated unit tests for your in-app purchase logic, and integrate these tests into your CI/CD pipeline using GitHub Actions.</p>
+<h2 is-upgraded>Benefits of Test Store</h2>
+<p>Test Store revolutionizes how you test in-app purchases. Unlike traditional testing methods that require you to wait for Google Play configuration or app approval, Test Store provides instant testing capabilities. You get complete deterministic control over purchase outcomes: whether a transaction succeeds, fails, or gets cancelled is entirely up to you. This means no more dealing with flaky network connections or unreliable sandbox environments.</p>
+<p>The real power comes when you start writing automated tests. With Test Store, you can build reliable unit tests for your purchase logic that run consistently in any environment, including CI/CD systems like GitHub Actions. This enables you to iterate quickly on your purchase flows, testing changes in seconds rather than minutes or hours.</p>
+<p class="image-container"><img alt="overview" src="img/95622ed5e44665fd.jpg"></p>
+<h2 is-upgraded>Prerequisites</h2>
+<p>Before you start, ensure you have:</p>
+<ol type="1">
+<li>A <strong>RevenueCat account</strong> (free at <a href="https://revenuecat.com" target="_blank">revenuecat.com</a>)</li>
+<li>An Android project with <strong>RevenueCat SDK</strong> integrated (version 8.0.0 or higher)</li>
+<li>Basic knowledge of <strong>Kotlin</strong> and <strong>Android development</strong></li>
+<li>Familiarity with <strong>Jetpack Compose</strong> (optional, for UI examples)</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Enable Test Store in Dashboard" duration="3">
+        <p>The first step is to enable Test Store in your RevenueCat dashboard and obtain your Test Store API key.</p>
+<h2 is-upgraded>Access the Dashboard</h2>
+<p>Start by logging into your <a href="https://app.revenuecat.com/" target="_blank">RevenueCat dashboard</a> and navigating to the <strong>Apps &amp; providers</strong> section in the left sidebar menu. This is where you&#39;ll find all your connected apps and available store integrations.</p>
+<h2 is-upgraded>Create Your Test Store</h2>
+<p>In the Apps &amp; providers section, look for the <strong>Test Store</strong> option among the available providers. Test Store is automatically provisioned for every RevenueCat project, so you&#39;ll simply need to activate it by clicking <strong>Create Test Store</strong> or <strong>Enable Test Store</strong>. The setup is instant with no waiting for approvals or configuration sync.</p>
+<h2 is-upgraded>Get Your API Key</h2>
+<p>Once Test Store is enabled, click on the Test Store entry in your apps list to view its details. Here you&#39;ll find your <strong>Test Store API Key</strong>, which starts with the prefix <code>test_</code>. This key functions just like a regular RevenueCat API key, but with one crucial difference: it routes all purchase requests to Test Store instead of Google Play, giving you full control over the testing environment.</p>
+<p><strong>Understanding API Key Separation:</strong> Test Store API keys are completely separate from your production and sandbox keys. This separation is intentional and important for security. Never use Test Store keys in production builds; they should only be used in debug and test environments. You can create multiple Test Store configurations per project if needed for different testing scenarios.</p>
+<p class="image-container"><img alt="test-store-setup" src="img/b7e7d20f43b03625.png"></p>
+<h2 is-upgraded>What&#39;s Next?</h2>
+<p>Now that you have your Test Store API key, you&#39;re ready to configure your Android application to use Test Store for testing.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure Test Store in Android App" duration="5">
+        <p>Now let&#39;s configure your Android application to use Test Store. The key is to use your Test Store API key instead of your production API key when running tests.</p>
+<h2 is-upgraded>Step 1: Create BuildConfig Fields</h2>
+<p>Add Test Store API key configuration to your app&#39;s <code>build.gradle.kts</code>:</p>
+<pre><code language="language-kotlin" class="language-kotlin">android {
+    defaultConfig {
+        // Your existing configuration
+
+        // Add Test Store API key for debug builds
+        buildConfigField(&#34;String&#34;, &#34;REVENUECAT_TEST_STORE_API_KEY&#34;, &#34;\&#34;test_YOUR_KEY_HERE\&#34;&#34;)
+    }
+
+    buildTypes {
+        debug {
+            // Use Test Store for debug builds
+            buildConfigField(&#34;String&#34;, &#34;REVENUECAT_API_KEY&#34;, &#34;\&#34;test_YOUR_KEY_HERE\&#34;&#34;)
+        }
+        release {
+            // Use production API key for release builds
+            buildConfigField(&#34;String&#34;, &#34;REVENUECAT_API_KEY&#34;, &#34;\&#34;goog_YOUR_PRODUCTION_KEY\&#34;&#34;)
+        }
+    }
+}
+</code></pre>
+<h2 is-upgraded>Step 2: Initialize SDK with Test Store</h2>
+<p>Update your Application class to use the appropriate API key based on build type:</p>
+<pre><code language="language-kotlin" class="language-kotlin">class MyApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+
+        // Initialize RevenueCat SDK
+        val apiKey = BuildConfig.REVENUECAT_API_KEY
+
+        val builder = PurchasesConfiguration.Builder(this, apiKey)
+        Purchases.configure(
+            builder
+                .purchasesAreCompletedBy(PurchasesAreCompletedBy.REVENUECAT)
+                .appUserID(null)
+                .diagnosticsEnabled(true)
+                .build()
+        )
+
+        // Enable debug logs for test builds
+        if (BuildConfig.DEBUG) {
+            Purchases.logLevel = LogLevel.DEBUG
+        }
+    }
+}
+</code></pre>
+<h2 is-upgraded>Step 3: Environment-Specific Configuration</h2>
+<p>For more advanced setups, you can create a configuration class:</p>
+<pre><code language="language-kotlin" class="language-kotlin">object RevenueCatConfig {
+    fun getApiKey(context: Context): String {
+        return if (isTestEnvironment()) {
+            BuildConfig.REVENUECAT_TEST_STORE_API_KEY
+        } else {
+            BuildConfig.REVENUECAT_API_KEY
+        }
+    }
+
+    private fun isTestEnvironment(): Boolean {
+        // Check if running in test environment
+        return try {
+            Class.forName(&#34;androidx.test.espresso.Espresso&#34;)
+            true
+        } catch (e: ClassNotFoundException) {
+            false
+        } || BuildConfig.DEBUG
+    }
+}
+</code></pre>
+<p>Then use it in your initialization:</p>
+<pre><code language="language-kotlin" class="language-kotlin">val apiKey = RevenueCatConfig.getApiKey(this)
+Purchases.configure(
+    PurchasesConfiguration.Builder(this, apiKey)
+        .purchasesAreCompletedBy(PurchasesAreCompletedBy.REVENUECAT)
+        .build()
+)
+</code></pre>
+<h2 is-upgraded>Verification</h2>
+<p>To verify Test Store is working:</p>
+<ol type="1">
+<li>Run your app in debug mode</li>
+<li>Check the logs for <code>"Purchases SDK initialized with Test Store"</code></li>
+<li>The SDK will indicate it&#39;s connected to Test Store instead of Google Play</li>
+</ol>
+<p class="image-container"><img alt="test-store-config" src="img/eefa03ac12234701.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Test Purchase Flows Interactively" duration="5">
+        <p>With Test Store enabled, you can now test purchase flows with complete control over outcomes. When Test Store shows its purchase dialog, <strong>you</strong> decide the result.</p>
+<h2 is-upgraded>Understanding Test Store Purchase Dialog</h2>
+<p>When you initiate a purchase with Test Store, you&#39;ll see a custom Test Store dialog instead of the standard Google Play purchase sheet. This dialog displays the product details and price just like a real purchase dialog, but with one key difference: you get to control the outcome. The dialog presents three clear options: <strong>Successful Purchase</strong> to simulate a completed transaction, <strong>Failed Purchase</strong> to test payment failures, and <strong>Cancel</strong> to simulate user cancellation. This deterministic behavior is what makes Test Store so powerful for testing.</p>
+<h2 is-upgraded>Testing Success Flow</h2>
+<p>Let&#39;s test a successful purchase flow:</p>
+<pre><code language="language-kotlin" class="language-kotlin">suspend fun purchaseProduct(activity: Activity) {
+    try {
+        // Fetch products from Test Store
+        val products = Purchases.sharedInstance.awaitGetProducts(
+            productIds = listOf(&#34;premium_monthly&#34;)
+        )
+
+        // Initiate purchase
+        val purchaseResult = Purchases.sharedInstance.awaitPurchase(
+            purchaseParams = PurchaseParams.Builder(
+                activity = activity,
+                storeProduct = products.first()
+            ).build()
+        )
+
+        // Check the result
+        val customerInfo = purchaseResult.customerInfo
+        val isPremium = customerInfo.entitlements[&#34;premium&#34;]?.isActive == true
+
+        if (isPremium) {
+            // Purchase successful!
+            showPremiumContent()
+        }
+    } catch (e: PurchasesException) {
+        // Handle error
+        handlePurchaseError(e)
+    }
+}
+</code></pre>
+<p><strong>Testing the Happy Path:</strong> Run your app and trigger the purchase flow as you normally would. When the Test Store dialog appears, tap <strong>&#34;Successful Purchase&#34;</strong>. Your app should immediately grant premium access, and you can verify that the entitlements are properly updated. This lets you quickly validate that your success flow works correctly without needing a real payment method or sandbox account.</p>
+<h2 is-upgraded>Testing Failure Scenarios</h2>
+<p>Now test how your app handles failures:</p>
+<pre><code language="language-kotlin" class="language-kotlin">fun handlePurchaseError(error: PurchasesException) {
+    when (error.code) {
+        PurchasesErrorCode.PURCHASE_CANCELLED_ERROR -&gt; {
+            // User cancelled - don&#39;t show error
+            Log.d(&#34;Purchase&#34;, &#34;User cancelled purchase&#34;)
+        }
+        PurchasesErrorCode.PURCHASE_INVALID_ERROR -&gt; {
+            // Invalid purchase
+            showError(&#34;This purchase is not available&#34;)
+        }
+        PurchasesErrorCode.PAYMENT_PENDING_ERROR -&gt; {
+            // Payment pending (e.g., awaiting parental approval)
+            showPendingMessage()
+        }
+        else -&gt; {
+            // Other errors
+            showError(&#34;Purchase failed: ${error.message}&#34;)
+        }
+    }
+}
+</code></pre>
+<p><strong>Testing Error Handling:</strong> Trigger the purchase flow again, but this time when the Test Store dialog appears, tap <strong>&#34;Failed Purchase&#34;</strong>. Your app should gracefully handle the error, showing an appropriate error message to the user. Confirm that the user doesn&#39;t receive premium access and that your app&#39;s state remains consistent. This is crucial for ensuring your error handling logic works correctly in production.</p>
+<h2 is-upgraded>Testing Cancellation</h2>
+<pre><code language="language-kotlin" class="language-kotlin">@Composable
+fun PaywallScreen(onDismiss: () -&gt; Unit) {
+    val scope = rememberCoroutineScope()
+    var isPurchasing by remember { mutableStateOf(false) }
+
+    Button(
+        onClick = {
+            scope.launch {
+                isPurchasing = true
+                try {
+                    purchaseProduct(LocalContext.current as Activity)
+                } catch (e: PurchasesException) {
+                    if (e.code == PurchasesErrorCode.PURCHASE_CANCELLED_ERROR) {
+                        // User cancelled - just dismiss
+                        onDismiss()
+                    }
+                }
+                isPurchasing = false
+            }
+        },
+        enabled = !isPurchasing
+    ) {
+        Text(if (isPurchasing) &#34;Processing...&#34; else &#34;Subscribe&#34;)
+    }
+}
+</code></pre>
+<p><strong>Testing User Cancellation:</strong> Open your paywall and tap the subscribe button. When the Test Store dialog appears, tap <strong>&#34;Cancel&#34;</strong> to simulate a user backing out of the purchase. Your paywall should dismiss cleanly without showing any error messages (cancellation is a normal user action, not an error state). Verify that no purchase was recorded and your app&#39;s state is unchanged.</p>
+<h2 is-upgraded>Key Takeaways</h2>
+<p>The beauty of Test Store lies in its deterministic control. You decide exactly what happens with each purchase attempt. This means you can thoroughly test all scenarios (success, failure, and cancellation) in a matter of minutes, without needing real payment methods or dealing with the delays and complexities of sandbox accounts. By the time you&#39;re ready to integrate with Google Play, you&#39;ll have confidence that your purchase handling logic is rock-solid.</p>
+<p class="image-container"><img alt="test-store-testing" src="img/f26f68146b2fcd3.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Write Automated Unit Tests" duration="8">
+        <p>One of Test Store&#39;s most powerful features is enabling <strong>automated unit testing</strong> of your in-app purchase logic. Let&#39;s write tests that run reliably in CI/CD.</p>
+<h2 is-upgraded>Step 1: Add Test Dependencies</h2>
+<p>Add the following to your <code>build.gradle.kts</code>:</p>
+<pre><code language="language-kotlin" class="language-kotlin">dependencies {
+    // RevenueCat SDK
+    implementation(&#34;com.revenuecat.purchases:purchases:8.20.0&#34;)
+
+    // Testing dependencies
+    testImplementation(&#34;junit:junit:4.13.2&#34;)
+    testImplementation(&#34;org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3&#34;)
+    testImplementation(&#34;io.mockk:mockk:1.13.8&#34;)
+    androidTestImplementation(&#34;androidx.test.ext:junit:1.1.5&#34;)
+    androidTestImplementation(&#34;androidx.test:runner:1.5.2&#34;)
+}
+</code></pre>
+<h2 is-upgraded>Step 2: Create Purchase Repository</h2>
+<p>First, let&#39;s create a testable purchase repository:</p>
+<pre><code language="language-kotlin" class="language-kotlin">interface PurchaseRepository {
+    suspend fun getProducts(productIds: List&lt;String&gt;): List&lt;StoreProduct&gt;
+    suspend fun purchaseProduct(activity: Activity, product: StoreProduct): CustomerInfo
+    suspend fun getCustomerInfo(): CustomerInfo
+}
+
+class PurchaseRepositoryImpl(
+    private val purchases: Purchases = Purchases.sharedInstance
+) : PurchaseRepository {
+
+    override suspend fun getProducts(productIds: List&lt;String&gt;): List&lt;StoreProduct&gt; {
+        return purchases.awaitGetProducts(productIds)
+    }
+
+    override suspend fun purchaseProduct(
+        activity: Activity,
+        product: StoreProduct
+    ): CustomerInfo {
+        val result = purchases.awaitPurchase(
+            PurchaseParams.Builder(activity, product).build()
+        )
+        return result.customerInfo
+    }
+
+    override suspend fun getCustomerInfo(): CustomerInfo {
+        return purchases.awaitCustomerInfo()
+    }
+}
+</code></pre>
+<h2 is-upgraded>Step 3: Create View Model with Business Logic</h2>
+<pre><code language="language-kotlin" class="language-kotlin">class PaywallViewModel(
+    private val repository: PurchaseRepository
+) : ViewModel() {
+
+    private val _state = MutableStateFlow&lt;PaywallState&gt;(PaywallState.Loading)
+    val state: StateFlow&lt;PaywallState&gt; = _state.asStateFlow()
+
+    fun loadProducts() {
+        viewModelScope.launch {
+            try {
+                val products = repository.getProducts(listOf(&#34;premium_monthly&#34;))
+                _state.value = PaywallState.Success(products)
+            } catch (e: Exception) {
+                _state.value = PaywallState.Error(e.message ?: &#34;Unknown error&#34;)
+            }
+        }
+    }
+
+    fun purchaseProduct(activity: Activity, product: StoreProduct) {
+        viewModelScope.launch {
+            _state.value = PaywallState.Purchasing
+            try {
+                val customerInfo = repository.purchaseProduct(activity, product)
+                val isPremium = customerInfo.entitlements[&#34;premium&#34;]?.isActive == true
+
+                if (isPremium) {
+                    _state.value = PaywallState.PurchaseSuccess
+                } else {
+                    _state.value = PaywallState.Error(&#34;Purchase completed but entitlement not active&#34;)
+                }
+            } catch (e: PurchasesException) {
+                when (e.code) {
+                    PurchasesErrorCode.PURCHASE_CANCELLED_ERROR -&gt; {
+                        _state.value = PaywallState.PurchaseCancelled
+                    }
+                    else -&gt; {
+                        _state.value = PaywallState.Error(e.message)
+                    }
+                }
+            }
+        }
+    }
+}
+
+sealed class PaywallState {
+    object Loading : PaywallState()
+    data class Success(val products: List&lt;StoreProduct&gt;) : PaywallState()
+    object Purchasing : PaywallState()
+    object PurchaseSuccess : PaywallState()
+    object PurchaseCancelled : PaywallState()
+    data class Error(val message: String) : PaywallState()
+}
+</code></pre>
+<h2 is-upgraded>Step 4: Write Unit Tests</h2>
+<p>Now create unit tests using Test Store:</p>
+<pre><code language="language-kotlin" class="language-kotlin">@RunWith(AndroidJUnit4::class)
+class PaywallViewModelTest {
+
+    private lateinit var repository: PurchaseRepository
+    private lateinit var viewModel: PaywallViewModel
+
+    @Before
+    fun setup() {
+        // Initialize RevenueCat with Test Store API key
+        Purchases.configure(
+            PurchasesConfiguration.Builder(
+                ApplicationProvider.getApplicationContext(),
+                &#34;test_YOUR_KEY_HERE&#34;
+            ).build()
+        )
+
+        repository = PurchaseRepositoryImpl()
+        viewModel = PaywallViewModel(repository)
+    }
+
+    @Test
+    fun testLoadProducts_Success() = runTest {
+        // Given: ViewModel is initialized
+
+        // When: Loading products
+        viewModel.loadProducts()
+
+        // Wait for state to update
+        advanceUntilIdle()
+
+        // Then: Products should be loaded successfully
+        val state = viewModel.state.value
+        assertTrue(state is PaywallState.Success)
+        assertFalse((state as PaywallState.Success).products.isEmpty())
+    }
+
+    @Test
+    fun testPurchaseProduct_Success() = runTest {
+        // Given: Products are loaded
+        viewModel.loadProducts()
+        advanceUntilIdle()
+
+        val state = viewModel.state.value as PaywallState.Success
+        val product = state.products.first()
+
+        // When: User purchases product and Test Store dialog shows &#34;Successful Purchase&#34;
+        // Note: In actual test, you&#39;ll need to interact with Test Store dialog
+        viewModel.purchaseProduct(mockActivity, product)
+        advanceUntilIdle()
+
+        // Then: Purchase should succeed and entitlement should be active
+        val finalState = viewModel.state.value
+        assertTrue(finalState is PaywallState.PurchaseSuccess)
+    }
+
+    @Test
+    fun testPurchaseProduct_Cancelled() = runTest {
+        // Given: Products are loaded
+        viewModel.loadProducts()
+        advanceUntilIdle()
+
+        val state = viewModel.state.value as PaywallState.Success
+        val product = state.products.first()
+
+        // When: User cancels purchase in Test Store dialog
+        viewModel.purchaseProduct(mockActivity, product)
+        advanceUntilIdle()
+
+        // Then: State should indicate cancellation
+        val finalState = viewModel.state.value
+        assertTrue(finalState is PaywallState.PurchaseCancelled)
+    }
+}
+</code></pre>
+<h2 is-upgraded>Step 5: Mock-Based Testing Alternative</h2>
+<p>For even more control, you can mock the repository:</p>
+<pre><code language="language-kotlin" class="language-kotlin">class PaywallViewModelMockTest {
+
+    private lateinit var mockRepository: PurchaseRepository
+    private lateinit var viewModel: PaywallViewModel
+
+    @Before
+    fun setup() {
+        mockRepository = mockk()
+        viewModel = PaywallViewModel(mockRepository)
+    }
+
+    @Test
+    fun testPurchaseSuccess() = runTest {
+        // Given: Mock successful purchase
+        val mockProduct = mockk&lt;StoreProduct&gt;()
+        val mockCustomerInfo = mockk&lt;CustomerInfo&gt; {
+            every { entitlements[&#34;premium&#34;]?.isActive } returns true
+        }
+
+        coEvery {
+            mockRepository.purchaseProduct(any(), mockProduct)
+        } returns mockCustomerInfo
+
+        // When: Purchase is initiated
+        viewModel.purchaseProduct(mockk(), mockProduct)
+        advanceUntilIdle()
+
+        // Then: State should be success
+        assertTrue(viewModel.state.value is PaywallState.PurchaseSuccess)
+    }
+
+    @Test
+    fun testPurchaseFailed() = runTest {
+        // Given: Mock failed purchase
+        val mockProduct = mockk&lt;StoreProduct&gt;()
+
+        coEvery {
+            mockRepository.purchaseProduct(any(), mockProduct)
+        } throws PurchasesException(
+            PurchasesErrorCode.PAYMENT_PENDING_ERROR,
+            &#34;Payment is pending&#34;
+        )
+
+        // When: Purchase is initiated
+        viewModel.purchaseProduct(mockk(), mockProduct)
+        advanceUntilIdle()
+
+        // Then: State should show error
+        val state = viewModel.state.value
+        assertTrue(state is PaywallState.Error)
+        assertTrue((state as PaywallState.Error).message.contains(&#34;pending&#34;))
+    }
+}
+</code></pre>
+<h2 is-upgraded>Why This Approach Works</h2>
+<p>This testing approach eliminates the traditional pain points of testing in-app purchases. Because Test Store has no network dependencies, your tests run reliably every single time. No more flaky failures due to connection issues. Tests execute in seconds rather than minutes, giving you rapid feedback during development. You can achieve complete test coverage across all scenarios, including edge cases that would be difficult or time-consuming to reproduce with real payment systems.</p>
+<p>The architecture we&#39;ve built (with the repository pattern separating business logic from the SDK) makes these tests both fast and maintainable. You can run them in any CI/CD environment like GitHub Actions, catching bugs before they ever reach production.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Run Tests in CI/CD" duration="4">
+        <p>Now let&#39;s configure your tests to run automatically in GitHub Actions, ensuring your purchase logic stays reliable with every code change.</p>
+<h2 is-upgraded>Step 1: Create GitHub Actions Workflow</h2>
+<p>Create <code>.github/workflows/android-tests.yml</code>:</p>
+<pre><code language="language-yaml" class="language-yaml">name: Android Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: &#39;17&#39;
+          distribution: &#39;temurin&#39;
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: $&#123;&#123; runner.os }}-gradle-$&#123;&#123; hashFiles(&#39;**/*.gradle*&#39;, &#39;**/gradle-wrapper.properties&#39;) }}
+          restore-keys: |
+            $&#123;&#123; runner.os }}-gradle-
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Run unit tests
+        env:
+          REVENUECAT_TEST_STORE_API_KEY: $&#123;&#123; secrets.REVENUECAT_TEST_STORE_API_KEY }}
+        run: ./gradlew testDebugUnitTest
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: app/build/test-results/
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-reports
+          path: app/build/reports/tests/
+</code></pre>
+<h2 is-upgraded>Step 2: Add Test Store API Key to GitHub Secrets</h2>
+<ol type="1">
+<li>Go to your GitHub repository</li>
+<li>Navigate to <strong>Settings</strong> → <strong>Secrets and variables</strong> → <strong>Actions</strong></li>
+<li>Click <strong>New repository secret</strong></li>
+<li>Name: <code>REVENUECAT_TEST_STORE_API_KEY</code></li>
+<li>Value: Your Test Store API key (e.g., <code>test_xxxxx</code>)</li>
+<li>Click <strong>Add secret</strong></li>
+</ol>
+<h2 is-upgraded>Step 3: Configure Gradle to Use Secret</h2>
+<p>Update your <code>build.gradle.kts</code> to use the environment variable:</p>
+<pre><code language="language-kotlin" class="language-kotlin">android {
+    defaultConfig {
+        // Get Test Store API key from environment or use placeholder
+        val testStoreApiKey = System.getenv(&#34;REVENUECAT_TEST_STORE_API_KEY&#34;)
+            ?: &#34;test_placeholder&#34;
+
+        buildConfigField(&#34;String&#34;, &#34;REVENUECAT_TEST_STORE_API_KEY&#34;, &#34;\&#34;$testStoreApiKey\&#34;&#34;)
+    }
+}
+</code></pre>
+<h2 is-upgraded>Step 4: Run Instrumented Tests with Emulator</h2>
+<p>For more advanced testing, add instrumented tests:</p>
+<pre><code language="language-yaml" class="language-yaml">  instrumented-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: &#39;17&#39;
+          distribution: &#39;temurin&#39;
+
+      - name: Enable KVM (for faster emulator)
+        run: |
+          echo &#39;KERNEL==&#34;kvm&#34;, GROUP=&#34;kvm&#34;, MODE=&#34;0666&#34;, OPTIONS+=&#34;static_node=kvm&#34;&#39; | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Run instrumented tests
+        uses: reactivecircus/android-emulator-runner@v2
+        env:
+          REVENUECAT_TEST_STORE_API_KEY: $&#123;&#123; secrets.REVENUECAT_TEST_STORE_API_KEY }}
+        with:
+          api-level: 29
+          target: default
+          arch: x86_64
+          profile: Nexus 6
+          script: ./gradlew connectedDebugAndroidTest
+
+      - name: Upload instrumented test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: instrumented-test-results
+          path: app/build/outputs/androidTest-results/
+</code></pre>
+<h2 is-upgraded>Verify Your Setup</h2>
+<p>Commit and push your changes to trigger the workflow. Head over to the GitHub <strong>Actions</strong> tab in your repository to watch your tests run automatically. You&#39;ll see real-time progress as the workflow checks out your code, sets up the environment, and runs your test suite. Within a few minutes, you&#39;ll know whether all tests pass in the CI environment.</p>
+<h2 is-upgraded>The Power of Automated Testing</h2>
+<p>Once this is set up, every pull request gets validated automatically before it can be merged. You&#39;ll get immediate feedback if any changes break your purchase logic, without having to manually test every scenario. Test Store ensures that your tests produce consistent results across every run, eliminating the frustration of flaky tests. This creates a quality gate that prevents buggy code from reaching your main branch, while saving countless hours that would otherwise be spent on repetitive manual testing.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Best Practices &amp; Production Setup" duration="3">
+        <p>Now that you&#39;ve set up Test Store, let&#39;s cover best practices and how to transition between Test Store and production environments.</p>
+<h2 is-upgraded>Environment Separation</h2>
+<p>Always keep Test Store and production keys separate:</p>
+<pre><code language="language-kotlin" class="language-kotlin">object RevenueCatKeys {
+    // Test Store - for testing only
+    const val TEST_STORE_KEY = &#34;test_xxxxx&#34;
+
+    // Google Play - for production
+    const val GOOGLE_PLAY_KEY = &#34;goog_xxxxx&#34;
+
+    fun getApiKey(isTestMode: Boolean): String {
+        return if (isTestMode) TEST_STORE_KEY else GOOGLE_PLAY_KEY
+    }
+}
+</code></pre>
+<h2 is-upgraded>Build Variant Configuration</h2>
+<p>Use build variants to automatically switch between environments:</p>
+<pre><code language="language-kotlin" class="language-kotlin">android {
+    buildTypes {
+        debug {
+            buildConfigField(&#34;String&#34;, &#34;RC_API_KEY&#34;, &#34;\&#34;test_xxxxx\&#34;&#34;)
+            buildConfigField(&#34;Boolean&#34;, &#34;USE_TEST_STORE&#34;, &#34;true&#34;)
+        }
+
+        release {
+            buildConfigField(&#34;String&#34;, &#34;RC_API_KEY&#34;, &#34;\&#34;goog_xxxxx\&#34;&#34;)
+            buildConfigField(&#34;Boolean&#34;, &#34;USE_TEST_STORE&#34;, &#34;false&#34;)
+        }
+    }
+
+    flavorDimensions += &#34;environment&#34;
+    productFlavors {
+        create(&#34;dev&#34;) {
+            dimension = &#34;environment&#34;
+            buildConfigField(&#34;String&#34;, &#34;RC_API_KEY&#34;, &#34;\&#34;test_xxxxx\&#34;&#34;)
+        }
+
+        create(&#34;staging&#34;) {
+            dimension = &#34;environment&#34;
+            buildConfigField(&#34;String&#34;, &#34;RC_API_KEY&#34;, &#34;\&#34;test_xxxxx\&#34;&#34;)
+        }
+
+        create(&#34;prod&#34;) {
+            dimension = &#34;environment&#34;
+            buildConfigField(&#34;String&#34;, &#34;RC_API_KEY&#34;, &#34;\&#34;goog_xxxxx\&#34;&#34;)
+        }
+    }
+}
+</code></pre>
+<h2 is-upgraded>Building a Comprehensive Testing Strategy</h2>
+<p>A robust testing strategy for in-app purchases should follow a pyramid approach. Start with unit tests using Test Store to validate your purchase logic in isolation. These run fast and catch most issues early. Build on that foundation with integration tests, also using Test Store, to verify complete purchase flows end-to-end. Once you&#39;re confident in your implementation, move to manual testing with Google Play Sandbox to verify platform integration. Finally, do a small-scale production test with real payments to ensure everything works in the live environment.</p>
+<h2 is-upgraded>Choosing Between Test Store and Sandbox</h2>
+<p>During initial development and iteration, Test Store is your best friend. It&#39;s perfect for rapid prototyping of purchase flows, writing unit and integration tests, and testing error handling and edge cases. The instant feedback loop makes it ideal for CI/CD automated testing where you need reliable, fast results.</p>
+<p>Switch to Google Play Sandbox when you need to test platform-specific features that Test Store doesn&#39;t simulate. This includes pending transactions (like those awaiting parental approval), receipt validation specifics, subscription renewal cycles, and region-specific pricing. Think of Sandbox as your pre-production validation environment. Use it after your core logic is solid and you need to verify Google Play integration.</p>
+<h2 is-upgraded>Security Best Practices</h2>
+<p>Never expose your Test Store API key in production:</p>
+<pre><code language="language-kotlin" class="language-kotlin">// ❌ BAD: Hardcoded keys
+val apiKey = &#34;test_xxxxx&#34;
+
+// ✅ GOOD: Environment-based configuration
+val apiKey = if (BuildConfig.DEBUG) {
+    BuildConfig.TEST_STORE_API_KEY
+} else {
+    BuildConfig.GOOGLE_PLAY_API_KEY
+}
+
+// ✅ BETTER: Check for test environment
+val apiKey = when {
+    isRunningInTests() -&gt; BuildConfig.TEST_STORE_API_KEY
+    BuildConfig.DEBUG -&gt; BuildConfig.TEST_STORE_API_KEY
+    else -&gt; BuildConfig.GOOGLE_PLAY_API_KEY
+}
+</code></pre>
+<h2 is-upgraded>Logging and Debugging</h2>
+<p>Enable appropriate logging levels:</p>
+<pre><code language="language-kotlin" class="language-kotlin">if (BuildConfig.USE_TEST_STORE) {
+    Purchases.logLevel = LogLevel.VERBOSE
+    Log.d(&#34;RevenueCat&#34;, &#34;Using Test Store for testing&#34;)
+} else if (BuildConfig.DEBUG) {
+    Purchases.logLevel = LogLevel.DEBUG
+} else {
+    Purchases.logLevel = LogLevel.INFO
+}
+</code></pre>
+<h2 is-upgraded>Transitioning to Production</h2>
+<p>Before shipping your app, ensure you&#39;ve completed a thorough checklist. All your tests should pass with Test Store, and you should have manually verified the integration with Google Play Sandbox. Double-check that your build variants are properly configured to use the right API keys in each environment. Production API keys must be secured and never committed to version control. Verify that Test Store keys are completely removed from release builds; they should only exist in debug configurations. Make sure logging is appropriately configured (verbose in debug, minimal in production), and confirm that your error handling has been tested across all scenarios.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="0">
+        <p>Congratulations! 🎉 You&#39;ve successfully set up RevenueCat&#39;s Test Store for Android. Throughout this codelab, you&#39;ve learned how to enable Test Store in your RevenueCat dashboard, configure Test Store API keys in your Android application, test purchase flows with deterministic outcomes, write automated unit tests for your purchase logic, run those tests in CI/CD environments like GitHub Actions, and follow best practices for environment separation.</p>
+<h2 is-upgraded>Key Takeaways</h2>
+<p>Test Store fundamentally changes how you approach in-app purchase testing. Gone are the days of wrestling with sandbox accounts and dealing with flaky network-dependent tests. With deterministic control over purchase outcomes, you can write reliable tests that give you true confidence in your implementation. The CI/CD integration means your purchase logic is continuously validated with every code change, enabling you to iterate on purchase flows in seconds instead of hours. Most importantly, you&#39;ll catch purchase-related bugs before they ever reach production, protecting both your revenue and user experience.</p>
+<h2 is-upgraded>Next Steps</h2>
+<p>Now that you have Test Store set up, it&#39;s time to build on this foundation. Start by writing comprehensive tests covering all your purchase scenarios. Don&#39;t just test the happy path. Integrate these tests into your CI/CD pipeline so they run automatically on every pull request. Thoroughly test your error handling with different failure modes to ensure your app degrades gracefully. When you&#39;re ready, transition to Google Play Sandbox for platform-specific testing to verify things like subscription renewals. Finally, ship with confidence, knowing that your purchase logic has been thoroughly validated at every step.</p>
+<h2 is-upgraded>Additional Resources</h2>
+<ul>
+<li><a href="https://www.revenuecat.com/blog/engineering/testing-test-store/" target="_blank">RevenueCat Test Store Blog Post</a></li>
+<li><a href="https://www.revenuecat.com/docs/getting-started/installation/android" target="_blank">RevenueCat Android SDK Documentation</a></li>
+<li><a href="https://www.revenuecat.com/docs/guides/testing-guide" target="_blank">Testing Guide</a></li>
+<li><a href="https://github.com/RevenueCat/cat-paywall-compose/" target="_blank">GitHub: Cat Paywall Compose</a></li>
+<li><a href="https://www.revenuecat.com/tutorials/" target="_blank">Product Tutorials</a></li>
+</ul>
+<p>Happy testing! 🚀</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

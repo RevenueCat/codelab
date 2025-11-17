@@ -1,0 +1,25 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2025-11-17T15:34:23+11:00",
+  "id": "codelab-test-store-android",
+  "duration": 30,
+  "title": "Set up Test Store for Android",
+  "summary": "Set up Test Store for Android",
+  "source": "codelab.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "codelab",
+    "markdown"
+  ],
+  "tags": [
+    "web"
+  ],
+  "feedback": "https://github.com/revenuecat/codelab/issues/new",
+  "url": "codelab-test-store-android"
+}
