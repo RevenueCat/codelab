@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2025-12-08T15:07:43+09:00",
+  "id": "codelab-monetization-strategies",
+  "duration": 44,
+  "title": "Boost Your App Revenue with RevenueCat",
+  "summary": "Boost Your App Revenue with RevenueCat Monetization Strategies",
+  "source": "codelab.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "codelab",
+    "markdown"
+  ],
+  "tags": [
+    "web"
+  ],
+  "feedback": "https://github.com/revenuecat/codelab/issues/new",
+  "ga4": "G-MMFEH1TP0C",
+  "url": "codelab-monetization-strategies"
+}
