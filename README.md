@@ -63,6 +63,8 @@ In this codelab, you will:
 - Learn how to distinguish between paying and non-paying users
 - Build a paywall screen, which is based on the server-driven UI approach
 
+## [IntelliJ IDE Plugin Configuration](https://revenuecat.github.io/codelab/intellij-plugin/codelab-intellij-plugin/index.html)
+
 # License
 ```xml
 Copyright (c) 2025 RevenueCat, Inc.
