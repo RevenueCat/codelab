@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2025-12-19T13:57:56+09:00",
+  "id": "codelab-intellij-plugin",
+  "duration": 28,
+  "title": "RevenueCat in Your IntelliJ IDE",
+  "summary": "RevenueCat IntelliJ Plugin - Manage subscriptions directly from your IDE",
+  "source": "rc/intellij-plugin/codelab.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "codelab",
+    "markdown"
+  ],
+  "tags": [
+    "web"
+  ],
+  "feedback": "https://github.com/revenuecat/codelab/issues/new",
+  "ga4": "G-MMFEH1TP0C",
+  "url": "codelab-intellij-plugin"
+}
