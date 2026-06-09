@@ -1,16 +1,179 @@
-<!DOCTYPE html>
-<html lang="en">
+
+<!doctype html>
+
+<html>
 <head>
-<meta charset="utf-8">
-<title>This codelab has moved | RevenueCat Codelabs</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="canonical" href="https://revenuecat.github.io/codelabs/intellij-plugin.html">
-<meta http-equiv="refresh" content="0; url=https://revenuecat.github.io/codelabs/intellij-plugin.html">
-<script>window.location.replace("https://revenuecat.github.io/codelabs/intellij-plugin.html");</script>
-<style>body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Inter,sans-serif;max-width:34rem;margin:16vh auto;padding:0 1.5rem;text-align:center;color:#1a1f36;line-height:1.6}a{color:#f2545b;font-weight:600;text-decoration:none}a:hover{text-decoration:underline}</style>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>RevenueCat in Your IntelliJ IDE</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
 </head>
 <body>
-<p>This codelab has moved to the latest RevenueCat Codelabs.</p>
-<p><a href="https://revenuecat.github.io/codelabs/intellij-plugin.html">Continue to the updated codelab &rarr;</a></p>
+  <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  codelab-ga4id="G-MMFEH1TP0C"
+                  id="codelab-intellij-plugin"
+                  title="RevenueCat in Your IntelliJ IDE"
+                  environment="web"
+                  feedback-link="https://github.com/revenuecat/codelab/issues/new">
+    
+      <google-codelab-step label="Overview" duration="2">
+        <p>Welcome to the <a href="https://www.revenuecat.com/" target="_blank">RevenueCat</a> IntelliJ Plugin Codelab!</p>
+<p>The RevenueCat IntelliJ Plugin brings subscription metrics, SDK tools, and webhook notifications directly into JetBrains IDEs like Android Studio and IntelliJ IDEA. No more context switching between your code and the RevenueCat dashboard—everything you need is right where you work.</p>
+<p>In this codelab, you&#39;ll learn how to install and configure the plugin, monitor your subscription metrics in real-time, browse your offerings and packages, track business milestones, set up SDK integration with the built-in wizard, receive webhook notifications, and configure the AI Assistant for intelligent subscription queries.</p>
+<p class="image-container"><img alt="overview" src="img/4bdce946a8df3050.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Install the Plugin" duration="2">
+        <p>The RevenueCat Dashboard plugin is available on the <a href="https://plugins.jetbrains.com/plugin/29265-revenuecat-dashboard" target="_blank">JetBrains Marketplace</a> for easy installation.</p>
+<ol type="1">
+<li>Open <strong>Settings/Preferences</strong> (⌘, on macOS or Ctrl+Alt+S on Windows/Linux)</li>
+<li>Navigate to <strong>Plugins</strong></li>
+<li>Click the <strong>Marketplace</strong> tab</li>
+<li>Search for <strong>&#34;RevenueCat Dashboard&#34;</strong></li>
+<li>Click <strong>Install</strong></li>
+<li>Restart your IDE</li>
+</ol>
+<p class="image-container"><img alt="install" src="img/c6bb820bd516f056.png"></p>
+<p>Positive : The plugin supports IntelliJ IDEA 2023.1 or later and Android Studio Hedgehog or newer.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configure Your API Keys" duration="3">
+        <p>After installation, you&#39;ll need to configure your RevenueCat credentials to connect the plugin to your dashboard. Open <strong>Settings/Preferences</strong>, navigate to <strong>Tools &gt; RevenueCat</strong>, and enter your credentials.</p>
+<p class="image-container"><img alt="settings" src="img/80a5ae028d1ad320.png"></p>
+<h2 is-upgraded>API Key (Secret Key)</h2>
+<p>The API Secret Key is your RevenueCat v2 API secret key, which starts with <code>sk_</code>. This key allows the plugin to securely communicate with the RevenueCat API to fetch your subscription data. You can find this key in your RevenueCat dashboard under <strong>Project Settings &gt; API Keys</strong>.</p>
+<p>Negative : Keep your API Secret Key secure. Never commit it to version control or share it publicly.</p>
+<h2 is-upgraded>SDK API Key</h2>
+<p>The SDK API Key is your platform-specific public key—the same key you use to initialize the RevenueCat SDK in your app. Depending on your platform, this key will have a different prefix: <code>goog_</code> for Google Play, <code>appl_</code> for App Store, <code>amzn_</code> for Amazon, or <code>stripe_</code> for Stripe. This key helps the plugin understand which platform context you&#39;re working with.</p>
+<h2 is-upgraded>Project ID</h2>
+<p>Your RevenueCat project ID identifies your specific project and can be found in your dashboard URL or project settings. Once you&#39;ve entered all three credentials, click <strong>Apply</strong> to save your settings. The plugin will validate your credentials and establish a connection to your RevenueCat dashboard.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="View Metrics Dashboard" duration="3">
+        <p>With your credentials configured, you can now access the RevenueCat tool window to monitor your subscription business in real-time. Open the tool window from <strong>View &gt; Tool Windows &gt; RevenueCat</strong> to see your metrics at a glance.</p>
+<p class="image-container"><img alt="metrics" src="img/d6caa0eaaac59ac5.png"></p>
+<h2 is-upgraded>Overview Metrics</h2>
+<p>The dashboard provides a comprehensive snapshot of your subscription health. At the top, you&#39;ll see your <strong>MRR (Monthly Recurring Revenue)</strong>, which represents your normalized monthly revenue from all active subscriptions—this is the heartbeat of your subscription business.</p>
+<p>Next to MRR, the <strong>Total Revenue</strong> metric shows how much revenue you&#39;ve generated in the last 28 days, giving you a sense of recent performance. The <strong>Active Subscriptions</strong> count tells you how many customers currently have an active subscription, while <strong>Active Trials</strong> shows users who are trying your product before committing.</p>
+<p>The <strong>Active Users</strong> metric tracks total engagement over the last 28 days, and <strong>New Customers</strong> highlights your acquisition success by showing how many new paying customers you&#39;ve gained recently. Together, these metrics give you a complete picture of your subscription business without ever leaving your IDE.</p>
+<p>Positive : Click <strong>Open in RevenueCat Dashboard</strong> to jump directly to your full dashboard in the browser for deeper analysis and historical charts.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Browse Offerings and Packages" duration="3">
+        <p>When you&#39;re implementing purchase flows or paywalls, you need quick access to your configured offerings and packages. The plugin&#39;s Offerings tab lets you explore your entire product catalog without switching to the browser.</p>
+<p>Click on the <strong>Offerings</strong> tab in the RevenueCat tool window to see all your configured offerings:</p>
+<p class="image-container"><img alt="offerings" src="img/19be628233280e80.png"></p>
+<h2 is-upgraded>Understanding Your Offerings</h2>
+<p>Each offering represents a collection of packages that you present to users at a specific point in your app. The plugin displays the offering name along with its current status—look for the <strong>[Current]</strong> badge to identify your default offering that users see when you don&#39;t specify one explicitly.</p>
+<p>Within each offering, you&#39;ll see all the packages it contains. Each package shows its identifier (like <code>$rc_monthly</code>, <code>$rc_annual</code>, or <code>$rc_lifetime</code>), which is exactly what you need when writing purchase code. This eliminates the guesswork and copy-paste errors that can happen when you&#39;re switching between your code and the dashboard.</p>
+<h2 is-upgraded>Quick Actions</h2>
+<p>Each offering has two action buttons. The <strong>Paywall</strong> button lets you preview the paywall associated with this offering, so you can see exactly what your users will experience. The <strong>Manage</strong> button takes you directly to that offering in your RevenueCat dashboard, where you can edit packages, adjust pricing, or modify the paywall design.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Track Milestones" duration="2">
+        <p>Building a subscription business is a journey, and celebrating milestones along the way keeps you motivated. RevenueCat tracks your progress toward key business goals, and the plugin brings these achievements directly into your IDE.</p>
+<p class="image-container"><img alt="milestones" src="img/18480287ae72714.png"></p>
+<h2 is-upgraded>Celebrating Your Progress</h2>
+<p>The Milestones view shows your progress across three key dimensions of your subscription business. First, <strong>Monthly Recurring Revenue (MRR)</strong> milestones track your journey toward revenue goals—watching this bar fill up as your business grows is incredibly satisfying.</p>
+<p>Second, <strong>Active Users</strong> milestones help you monitor your user growth. As more people engage with your app, you&#39;ll hit milestones that reflect your expanding reach. Third, <strong>New Customers</strong> milestones celebrate your acquisition success, marking the moments when your customer base reaches new heights.</p>
+<p>When you hit a milestone, the plugin shows a celebratory notification complete with confetti! It&#39;s a small touch, but seeing these achievements pop up while you&#39;re coding creates a tangible connection between your development work and your business success.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="SDK Integration Wizard" duration="4">
+        <p>One of the plugin&#39;s most powerful features is the SDK Integration Wizard. Instead of manually adding dependencies and writing boilerplate code, the wizard guides you through the entire setup process with just a few clicks.</p>
+<h2 is-upgraded>Choose Your Platform</h2>
+<p>Access the wizard from the RevenueCat menu and you&#39;ll see options for different platforms and use cases:</p>
+<p class="image-container"><img alt="platform" src="img/2cdeeb4d39552bb3.png"></p>
+<p>For <strong>full SDK integration</strong>, you can choose Android (Kotlin) for native Android apps with Google Play Billing and Compose integration, Kotlin Multiplatform for cross-platform iOS and Android apps with shared business logic, or Flutter for cross-platform development with Dart.</p>
+<p>If you <strong>already have the SDK installed</strong> and just want to add paywall functionality, separate options are available for Android Paywall, KMP Paywall, and Flutter Paywall. These streamlined paths add only the paywall UI components without reinstalling the core SDK.</p>
+<h2 is-upgraded>Automatic Setup</h2>
+<p>After selecting your platform, the wizard takes care of the tedious setup work:</p>
+<p class="image-container"><img alt="setup" src="img/f4da813278310a78.png"></p>
+<p>The wizard automatically adds the required dependencies to your <code>build.gradle</code> or <code>pubspec.yaml</code> file, using the latest stable version. It then generates code templates for paywall implementation, including the composable functions and listeners you need to handle purchases properly.</p>
+<p>Before applying any changes, the wizard shows you a preview of the generated code. You can review exactly what will be added to your project, make sure it fits your architecture, and then apply the changes with confidence. The generated code follows RevenueCat best practices, including proper error handling and purchase completion callbacks.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="SDK Release Notifications" duration="2">
+        <p>Keeping your SDK up-to-date is important for accessing new features, bug fixes, and security patches. The plugin monitors RevenueCat SDK releases across all platforms and notifies you when updates are available.</p>
+<p class="image-container"><img alt="releases" src="img/9ee41a948fbdb5a5.png"></p>
+<h2 is-upgraded>Stay Current Across All Platforms</h2>
+<p>The release viewer provides a unified view of SDK updates for Android, iOS, Kotlin Multiplatform, Flutter, and React Native. You can switch between platforms using the tabs at the top to see what&#39;s new in each ecosystem.</p>
+<p>For each release, you&#39;ll see the version number, publish date, and a detailed breakdown of changes. Bug fixes are clearly marked so you can assess whether they affect your implementation. Breaking changes and warnings are highlighted prominently, helping you prepare for any migration work. The viewer also shows other changes and enhancements that might benefit your app.</p>
+<p>Each release includes a <strong>View on GitHub</strong> link that takes you directly to the full release notes, where you can dive deeper into specific changes or review the commit history.</p>
+<p>Enable <strong>Notify me when a new version is available</strong> to receive automatic desktop notifications when any RevenueCat SDK is updated. This way, you&#39;ll always know when it&#39;s time to upgrade.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Webhook Notifications" duration="2">
+        <p>During development and testing, knowing when webhook events fire is crucial for debugging your server integration. The plugin provides real-time desktop notifications for RevenueCat webhook events, so you can see immediately when something happens.</p>
+<p class="image-container"><img alt="webhook" src="img/6f08219321b78245.png"></p>
+<h2 is-upgraded>Real-Time Event Monitoring</h2>
+<p>When a webhook event fires—whether it&#39;s a test event you triggered or a real purchase from the sandbox—you&#39;ll see a desktop notification appear instantly. The notification shows the event type, success or failure status, and relevant details about what happened.</p>
+<p>This is particularly valuable during development when you&#39;re testing purchase flows. Instead of checking server logs or refreshing the RevenueCat dashboard, you get immediate feedback right on your desktop. You can verify that your webhook endpoint is receiving events correctly, confirm that test purchases are being processed, and catch any issues before they reach production.</p>
+<p>Positive : Use the <strong>Send Test Webhook</strong> button in your RevenueCat dashboard to verify your webhook notifications are working correctly. You should see a notification appear within seconds.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="AI Assistant (Optional)" duration="4">
+        <p>The RevenueCat IntelliJ plugin includes an AI Assistant that transforms how you interact with your subscription data. Instead of navigating through dashboards and documentation, you can simply ask questions in natural language and get immediate answers.</p>
+<p class="image-container"><img alt="ai-assistant" src="img/4bdce946a8df3050.png"></p>
+<h2 is-upgraded>Enable AI Assistant</h2>
+<p>To get started with the AI Assistant, open <strong>Settings/Preferences</strong> and navigate to <strong>Tools &gt; RevenueCat &gt; AI Settings</strong>. Enable the <strong>AI Assistant</strong> toggle, then choose your preferred AI provider. The plugin supports OpenAI (GPT-4o and GPT-4o Mini), Anthropic (Claude 3.5 Sonnet and Claude 3 Haiku), and Google (Gemini 2.5 Flash and Gemini 2.5 Pro). Each provider offers different strengths—GPT-4o and Claude Sonnet excel at complex reasoning, while GPT-4o Mini and Gemini Flash provide faster responses for simpler queries.</p>
+<p>After selecting your provider, enter your API key. The key is stored securely in IntelliJ&#39;s credential storage on your local computer and is never sent to RevenueCat.</p>
+<p>Negative : Your AI API key is stored securely in IntelliJ&#39;s credential storage on your local computer and is never sent to RevenueCat.</p>
+<h2 is-upgraded>Intelligent Subscription Queries</h2>
+<p>Once configured, the AI Assistant becomes your personal subscription expert. You can ask about your metrics—&#34;What&#39;s my current MRR?&#34; or &#34;How many active trials do I have?&#34;—and get instant answers based on your actual data.</p>
+<p>Need to check your configuration? Ask &#34;What offerings do I have configured?&#34; and the assistant will list all your offerings with their packages and identifiers. Wondering about trends? Try &#34;Show me my revenue growth&#34; or &#34;What&#39;s my trial conversion rate?&#34; for insights into your business performance.</p>
+<p>The assistant also helps with implementation questions. Ask &#34;How do I fetch offerings on Android using Kotlin?&#34; and you&#39;ll get code examples tailored to your project. It combines your RevenueCat data with documentation knowledge to provide contextual, actionable answers—all without leaving your IDE.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusion" duration="1">
+        <p>Congratulations! You&#39;ve learned how to use the RevenueCat IntelliJ Plugin to manage your subscription business directly from your IDE. From monitoring metrics and browsing offerings to setting up SDK integration and receiving webhook notifications, you now have powerful tools at your fingertips.</p>
+<p>The plugin eliminates context switching between your code and the RevenueCat dashboard, helping you stay in your flow state while keeping a pulse on your subscription business. Whether you&#39;re debugging a purchase flow, checking your latest metrics, or setting up a new project, everything you need is just a click away.</p>
+<h2 is-upgraded>Next Steps</h2>
+<p>To continue your RevenueCat journey, explore the <a href="https://www.revenuecat.com/docs/" target="_blank">RevenueCat Documentation</a> for comprehensive guides on all features. If you&#39;re building an Android app, check out the <a href="https://revenuecat.github.io/codelab/android/codelab-2-android-sdk/" target="_blank">Android SDK Codelab</a> to implement purchases and paywalls step by step.</p>
+<p>Now go build something amazing—and watch those metrics grow!</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
 </body>
 </html>
