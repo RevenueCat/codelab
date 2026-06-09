@@ -2,7 +2,7 @@
 
 This codelab is a step-by-step tutorial designed to help you learn and master the [RevenueCat SDK](https://www.revenuecat.com/docs/welcome/overview) taking you from the absolute basics to more advanced implementation. Whether you're just getting started or looking to deepen your understanding, this guide walks you through everything you need to go from zero to hero with RevenueCat.
 
-## [RevenueCat Google Play Integration](https://revenuecat.github.io/codelab/google-play/codelab-1-google-play-integration/index.html#0)
+## [RevenueCat Google Play Integration](https://revenuecat.github.io/codelabs/google-play.html)
 
 In this codelab, you'll learn how to:
 
@@ -11,7 +11,7 @@ In this codelab, you'll learn how to:
 - Understanding Product, Offering, Package, and Entitlement.
 - Create paywalls using the [Paywall Editor](https://www.revenuecat.com/docs/tools/paywalls/creating-paywalls#using-the-editor).
 
-## [RevenueCat App Store Integration](https://revenuecat.github.io/codelab/app-store/app-store/index.html#0)
+## [RevenueCat App Store Integration](https://revenuecat.github.io/codelabs/app-store/index.html)
 
 In this codelab, you'll learn how to:
 
@@ -20,7 +20,7 @@ In this codelab, you'll learn how to:
 - Understanding Product, Offering, Package, and Entitlement.
 - Create paywalls using the [Paywall Editor](https://www.revenuecat.com/docs/tools/paywalls/creating-paywalls#using-the-editor).
 
-## [Android In-App Purchases & Paywalls](https://revenuecat.github.io/codelab/android/codelab-2-android-sdk/index.html#0)
+## [Android In-App Purchases & Paywalls](https://revenuecat.github.io/codelabs/android.html)
 
 In this codelab, you will:
 
@@ -29,7 +29,7 @@ In this codelab, you will:
 - Learn how to distinguish between paying and non-paying users
 - Build a paywall screen, which is based on the server-driven UI approach
 
-## [iOS In-App Purchases & Paywalls with SwiftUI](https://revenuecat.github.io/codelab/ios/ios/index.html#0)
+## [iOS In-App Purchases & Paywalls with SwiftUI](https://revenuecat.github.io/codelabs/ios.html)
 
 In this codelab, you will:
 
@@ -38,7 +38,7 @@ In this codelab, you will:
 - Learn how to distinguish between paying and non-paying users.
 - Build a paywall screen using SwiftUI, driven by RevenueCat's server-side configuration.
 
-## [Kotlin Multiplatform Purchases & Paywalls Overview](https://revenuecat.github.io/codelab/kmp/codelab-3-kmp-sdk/index.html#0)
+## [Kotlin Multiplatform Purchases & Paywalls Overview](https://revenuecat.github.io/codelabs/kmp.html)
 
 In this codelab, you will:
 
@@ -47,7 +47,7 @@ In this codelab, you will:
 - Learn how to distinguish between paying and non-paying users
 - Build a paywall screen, which is based on the server-driven UI approach
 
-## [Flutter Purchases & Paywalls Overview](https://revenuecat.github.io/codelab/flutter/codelab-4-flutter-sdk/index.html#0)
+## [Flutter Purchases & Paywalls Overview](https://revenuecat.github.io/codelabs/flutter.html)
 
 In this codelab, you will:
 - Integrate the RevenueCat SDK into your Flutter project
@@ -55,7 +55,7 @@ In this codelab, you will:
 - Learn how to distinguish between paying and non-paying users
 - Build a paywall screen, which is based on the server-driven UI approach
 
-## [React Native Purchases & Paywalls Overview](https://revenuecat.github.io/codelab/react-native/codelab-5-react-native-sdk/index.html#0)
+## [React Native Purchases & Paywalls Overview](https://revenuecat.github.io/codelabs/react-native.html)
 
 In this codelab, you will:
 - Integrate the RevenueCat SDK into your React Native project
@@ -63,7 +63,7 @@ In this codelab, you will:
 - Learn how to distinguish between paying and non-paying users
 - Build a paywall screen, which is based on the server-driven UI approach
 
-## [IntelliJ IDE Plugin Configuration](https://revenuecat.github.io/codelab/intellij-plugin/codelab-intellij-plugin/index.html)
+## [IntelliJ IDE Plugin Configuration](https://revenuecat.github.io/codelabs/intellij-plugin.html)
 
 # License
 ```xml
